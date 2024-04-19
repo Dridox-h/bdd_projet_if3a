@@ -1,6 +1,23 @@
 <?php
+
+function email_present($email, $bdd) {
+    $query = $bdd->prepare("SELECT email FROM utilisateur WHERE email = :email");
+
+    $query->execute(['email' => $email]);
+
+    $result = $query->fetch(PDO::FETCH_ASSOC);
+
+    if ($result) {
+        return 0; // L'e-mail est déjà présent
+    } else {
+        return 1; // L'e-mail n'est pas présent
+    }
+}
+
+
 try {
     $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
+
 
 } catch (PDOException $e) {
     die('Erreur de connexion : ' . $e->getMessage());
@@ -12,38 +29,19 @@ if (isset($_POST['submit'])) {
     $prenom = $_POST['prenom'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    if(email_present($email,$bdd)==0){
+        echo "email déjà présent";
+    }else {
+        $req = $bdd->prepare("INSERT INTO utilisateur(nom, prenom, email, password) VALUES (?,?,?,?);");
+        $req->execute([$nom, $prenom,$email,$password]);
+    }
 }
 
-var_dump($_POST);
 
-// function email_present($email, $bdd) {
-//     $query = $bdd->prepare("SELECT email FROM utilisateur WHERE email = :email");
 
-//     $query->execute(['email' => $email]);
+//var_dump($_POST);
 
-//     $result = $query->fetch(PDO::FETCH_ASSOC);
 
-//     if ($result) {
-//         return 0; // L'e-mail est déjà présent
-//     } else {
-//         return 1; // L'e-mail n'est pas présent
-//     }
-// }
-
-// session_start();
-// $id_session = session_id();
-
-// $nom = $_POST["nom"];
-// $prenom = $_POST["prenom"];
-// $email = $_POST["email"];
-// $password = $_POST["password"];
-
-// if(email_present($email,$bdd)==0){
-//     echo "email déjà présent";
-// }else {
-//     $req = $bdd->prepare("INSERT INTO utilisateur(nom, prenom, email, password) VALUES (?,?,?,?);");
-//     $req->execute([$nom, $prenom,$email,$password]);
-// }
 ?>
 
 <!DOCTYPE html>
