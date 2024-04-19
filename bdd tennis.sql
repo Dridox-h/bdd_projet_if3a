@@ -41,7 +41,7 @@ CREATE TABLE reservation(
    FOREIGN KEY(id_court) REFERENCES courts(id_court)
 );
 
-CREATE TABLE appartenance_club(
+CREATE TABLE adhere(
    id_user INT,
    id_club INT,
    role_adherent VARCHAR(50) NOT NULL,
