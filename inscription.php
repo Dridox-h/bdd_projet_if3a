@@ -31,7 +31,7 @@ $email = $_POST["email"];
 $password = $_POST["password"];
 
 if(email_present($email,$bdd)==0){
-    echo "emial déjà présent";
+    echo "email déjà présent";
 }else {
     $req = $bdd->prepare("INSERT INTO utilisateur(nom, prenom, email, password) VALUES (?,?,?,?);");
     $req->execute([$nom, $prenom,$email,$password]);
