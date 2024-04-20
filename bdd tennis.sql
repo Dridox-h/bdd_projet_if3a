@@ -22,39 +22,32 @@ CREATE TABLE courts(
    FOREIGN KEY(id_club) REFERENCES club(id_club)
 );
 
-CREATE TABLE equipe(
-   id_equipe VARCHAR(50),
-   nom_equipe VARCHAR(50),
-   PRIMARY KEY(id_equipe)
-);
-
 CREATE TABLE reservation(
    id_reservation INT,
    date_reservation DATE,
    heure_debut TIME,
    duree TIME,
-   id_equipe VARCHAR(50) NOT NULL,
    id_court INT NOT NULL,
    PRIMARY KEY(id_reservation),
-   UNIQUE(id_equipe),
-   FOREIGN KEY(id_equipe) REFERENCES equipe(id_equipe),
    FOREIGN KEY(id_court) REFERENCES courts(id_court)
 );
 
 CREATE TABLE adhere(
-   id_user INT,
-   id_club INT,
+   id_user_1 INT,
+   id_club_1 INT,
+   id_club VARCHAR(50),
+   id_user VARCHAR(50),
    role_adherent VARCHAR(50) NOT NULL,
-   PRIMARY KEY(id_user, id_club),
-   FOREIGN KEY(id_user) REFERENCES utilisateur(id_user),
-   FOREIGN KEY(id_club) REFERENCES club(id_club)
+   PRIMARY KEY(id_user_1, id_club_1),
+   FOREIGN KEY(id_user_1) REFERENCES utilisateur(id_user),
+   FOREIGN KEY(id_club_1) REFERENCES club(id_club)
 );
 
-CREATE TABLE joue_avec(
+CREATE TABLE reserve(
    id_user INT,
-   id_equipe VARCHAR(50),
    role VARCHAR(50),
-   PRIMARY KEY(id_user, id_equipe),
+   id_reservation INT NOT NULL,
+   PRIMARY KEY(id_user),
    FOREIGN KEY(id_user) REFERENCES utilisateur(id_user),
-   FOREIGN KEY(id_equipe) REFERENCES equipe(id_equipe)
+   FOREIGN KEY(id_reservation) REFERENCES reservation(id_reservation)
 );
