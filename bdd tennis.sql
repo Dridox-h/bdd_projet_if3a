@@ -32,7 +32,7 @@ CREATE TABLE reservation(
    FOREIGN KEY(id_court) REFERENCES courts(id_court)
 );
 
-CREATE TABLE adhere(
+CREATE TABLE appartenance_club(
    id_user_1 INT,
    id_club_1 INT,
    id_club VARCHAR(50),
@@ -43,11 +43,11 @@ CREATE TABLE adhere(
    FOREIGN KEY(id_club_1) REFERENCES club(id_club)
 );
 
-CREATE TABLE reserve(
+CREATE TABLE Inscrits(
    id_user INT,
+   id_reservation INT,
    role VARCHAR(50),
-   id_reservation INT NOT NULL,
-   PRIMARY KEY(id_user),
+   PRIMARY KEY(id_user, id_reservation),
    FOREIGN KEY(id_user) REFERENCES utilisateur(id_user),
    FOREIGN KEY(id_reservation) REFERENCES reservation(id_reservation)
 );
