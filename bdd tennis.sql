@@ -33,14 +33,12 @@ CREATE TABLE reservation(
 );
 
 CREATE TABLE appartenance_club(
-   id_user_1 INT,
-   id_club_1 INT,
-   id_club VARCHAR(50),
-   id_user VARCHAR(50),
+   id_user INT,
+   id_club INT,
    role_adherent VARCHAR(50) NOT NULL,
-   PRIMARY KEY(id_user_1, id_club_1),
-   FOREIGN KEY(id_user_1) REFERENCES utilisateur(id_user),
-   FOREIGN KEY(id_club_1) REFERENCES club(id_club)
+   PRIMARY KEY(id_user, id_club),
+   FOREIGN KEY(id_user) REFERENCES utilisateur(id_user),
+   FOREIGN KEY(id_club) REFERENCES club(id_club)
 );
 
 CREATE TABLE Inscrits(
