@@ -6,19 +6,17 @@ $message = '';
 // Connexion à la base de données
 try {
     $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-
-
 } catch (PDOException $e) {
     die('Erreur de connexion : ' . $e->getMessage());
 }
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['email']) && isset($_POST['password'])) {
         $email = $_POST['email'];
         $password = $_POST['password'];
         
-        $req = $pdo->prepare("SELECT * FROM utilisateur WHERE email = :email");
+        // Requête SQL pour récupérer l'utilisateur avec l'email donné
+        $req = $bdd->prepare("SELECT * FROM utilisateur WHERE email = :email");
         $req->execute(['email' => $email]);
         $user = $req->fetch();
 
@@ -33,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
