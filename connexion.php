@@ -15,8 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = $_POST['email'];
         $password = $_POST['password'];
         
-        // Requête SQL pour récupérer l'utilisateur avec l'email donné
-        $req = $bdd->prepare("SELECT * FROM utilisateur WHERE email = :email");
+        $req = $pdo->prepare("SELECT * FROM utilisateur WHERE email = :email");
         $req->execute(['email' => $email]);
         $user = $req->fetch();
 
