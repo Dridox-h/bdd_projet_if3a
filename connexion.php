@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = $_POST['email'];
         $password = $_POST['password'];
         
-        $req = $pdo->prepare("SELECT * FROM utilisateur WHERE email = :email");
+        $req =$bdd->prepare("SELECT * FROM utilisateur WHERE email = :email");
         $req->execute(['email' => $email]);
         $user = $req->fetch();
 
