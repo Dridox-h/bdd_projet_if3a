@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php if (!empty($message)): ?>
         <p style="color:red"><?= $message ?></p>
     <?php endif; ?>
-    <form action="connexion.php" method="post">
+    <form class="form-container" action="connexion.php" method="post">
         <label for="email">Email : </label>
         <input type="email" name="email" id="email" required>
         <label for="password">Mot de passe</label>
