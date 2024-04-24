@@ -10,22 +10,29 @@ try {
     die('Erreur de connexion : ' . $e->getMessage());
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if (isset($_POST['submit'])) {
     if (isset($_POST['email']) && isset($_POST['password'])) {
         $email = $_POST['email'];
         $password = $_POST['password'];
-        
-        $req = $pdo->prepare("SELECT * FROM utilisateur WHERE email = :email");
-        $req->execute(['email' => $email]);
-        $user = $req->fetch();
 
-        // Vérifie si l'utilisateur existe et si le mot de passe correspond
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['id_user'] = $user['id_user'];
-            header("Location: accueil.php"); 
-            exit();
+        $req = $bdd->prepare("SELECT * FROM utilisateur WHERE email = ?");
+        $req->execute([$email]);
+        $user = $req->fetch(); 
+
+        // Check if user exists and if password matches
+        if ($user) {
+            // Verify password
+            if ($password == $user['password']) {
+                // Password is correct, set session variable and redirect to index.php
+                session_start();
+                $_SESSION['id_user'] = $user['id_user'];
+                header("Location: index.php"); 
+                exit();
+            } else {
+                $message = 'Mauvais mot de passe';
+            }
         } else {
-            $message = 'Mauvais identifiants';
+            $message = 'Utilisateur non trouvé';
         }
     }
 }
