@@ -67,8 +67,7 @@ if (isset($_POST['submit'])) {
             <label for="password">Mot de passe</label>
             <input type="password" name="password" id="password" required>
             <input type="submit" name="submit" value="S'inscrire">
-            <a href="connexion.php">Se connecter</a>
-            Vous avez déjà un compte ?  ? <a href="connexion.php">Se connecter </a>
+            Vous avez déjà un compte ? <a href="connexion.php">Se connecter </a>
         </form>
     </section>
 
