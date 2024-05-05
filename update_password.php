@@ -3,19 +3,15 @@ session_start();
 
 $message = '';
 
-// Vérification de la session ouverte pour l'utilisateur
 if (isset($_SESSION['id_user'])) {
-    // Connexion à la base de données
     try {
         $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
     } catch (PDOException $e) {
         die('Erreur de connexion : ' . $e->getMessage());
     }
 
-    // Récupération de l'ID de l'utilisateur depuis la session
     $id_user = $_SESSION['id_user'];
 
-    // Récupération des informations de l'utilisateur depuis la base de données
     $stmt = $bdd->prepare("SELECT nom, prenom FROM utilisateur WHERE id_user = ?");
     $stmt->execute([$id_user]);
     $user_info = $stmt->fetch();
@@ -27,16 +23,12 @@ if (isset($_SESSION['id_user'])) {
             $ancient_password = $_POST['ancient_password'];
             $new_password = $_POST['new_password'];
 
-            // Récupération des informations de l'utilisateur depuis la base de données
             $req = $bdd->prepare("SELECT * FROM utilisateur WHERE id_user = ?");
             $req->execute([$id_user]);
             $user = $req->fetch();
 
-            // Vérification du mot de passe actuel
             if ($ancient_password == $user['password']) {
-                // Vérification que le nouveau mot de passe est différent de l'ancien
                 if ($ancient_password !== $new_password) {
-                    // Mise à jour du mot de passe dans la base de données
                     $req = $bdd->prepare("UPDATE utilisateur SET password = ? WHERE id_user = ? ");
                     $req->execute([$new_password, $id_user]);
                     $message = 'Mot de passe mis à jour avec succès';
@@ -49,7 +41,6 @@ if (isset($_SESSION['id_user'])) {
         }
     }
 } else {
-    // Redirection vers la page de connexion si la session n'est pas ouverte
     header("Location: connexion.php");
     exit;
 }

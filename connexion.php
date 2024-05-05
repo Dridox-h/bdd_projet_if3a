@@ -3,7 +3,6 @@ session_start();
 
 $message = '';
 
-// Connexion à la base de données
 try {
     $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
 } catch (PDOException $e) {
@@ -19,11 +18,8 @@ if (isset($_POST['submit'])) {
         $req->execute([$email]);
         $user = $req->fetch(); 
 
-        // Check if user exists and if password matches
         if ($user) {
-            // Verify password
             if ($password == $user['password']) {
-                // Password is correct, set session variable and redirect to index.php
                 session_start();
                 $_SESSION['id_user'] = $user['id_user'];
                 header("Location: index.php"); 

@@ -1,31 +1,23 @@
-
-
-
 <?php
 try {
     $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Activer les erreurs PDO
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 } catch (PDOException $e) {
     die('Erreur de connexion : ' . $e->getMessage());
 }
 
-// Traitement du formulaire si des données sont soumises
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Vérification des données envoyées
     $emplacement = $_POST['emplacement'];
     $type_surface = $_POST['type_surface'];
     $id_club = $_POST['id_club'];
 
-    // Requête SQL pour insérer un nouveau court dans la base de données
     $req = $bdd->prepare("INSERT INTO courts (emplacement, id_club, type_surface) VALUES (?, ?, ?)");
     $req->execute([$emplacement, $id_club, $type_surface]);
 
-    // Redirection vers la page de gestion des courts après l'ajout
     header("Location: gestion_courts.php");
     exit();
 }
 
-// Requête SQL pour récupérer la liste des clubs
 $req_clubs = $bdd->query("SELECT id_club, nom_club,ville FROM club");
 $clubs = $req_clubs->fetchAll(PDO::FETCH_ASSOC);
 ?>

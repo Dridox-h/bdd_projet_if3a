@@ -1,25 +1,22 @@
 <?php
 try {
     $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Activer les erreurs PDO
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 } catch (PDOException $e) {
     die('Erreur de connexion : ' . $e->getMessage());
 }
 
-// Vérifier si un court doit être supprimé
 if (isset($_POST['id_court'])) {
     $id_court = $_POST['id_court'];
-    // Requête SQL pour supprimer le court
     $req = $bdd->prepare("DELETE FROM courts WHERE id_court = ?");
     $req->execute([$id_court]);
 }
 
-// Requête SQL pour sélectionner les informations nécessaires
 $req = $bdd->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
                       FROM courts c 
                       INNER JOIN club cl ON c.id_club = cl.id_club"); 
 $req->execute();
-$courts = $req->fetchAll(PDO::FETCH_ASSOC); // Utilisation de fetchAll pour récupérer toutes les lignes
+$courts = $req->fetchAll(PDO::FETCH_ASSOC); 
 ?>
 
 <!DOCTYPE html>
@@ -52,7 +49,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC); // Utilisation de fetchAll pour réc
             <th>Nom du club</th>
             <th>Type de surface</th>
             <th>Ville</th>
-            <th>Actions</th> <!-- Nouvelle colonne pour les actions -->
+            <th>Actions</th> 
         </tr>
     </thead>
     <tbody>
@@ -62,7 +59,6 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC); // Utilisation de fetchAll pour réc
                 <td><?php echo $court['nom_club']; ?></td>
                 <td><?php echo $court['type_surface']; ?></td>
                 <td><?php echo $court['ville']; ?></td>
-                <!-- Colonne pour les actions -->
                 <td>
                     <a href="modifier_court.php?id=<?php echo $court['id_court']; ?>">Modifier</a>
                     <form method="POST" style="display:inline;">
