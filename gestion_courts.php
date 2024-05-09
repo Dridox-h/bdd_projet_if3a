@@ -68,6 +68,8 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
                 </td>
             </tr>
         <?php } ?>
+
+        
     </tbody>
 </table>
 <a href="ajouter_court.php">Ajouter une court</a>

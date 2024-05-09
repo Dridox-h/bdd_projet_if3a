@@ -46,3 +46,13 @@ CREATE TABLE Inscrits(
    FOREIGN KEY(id_user) REFERENCES utilisateur(id_user),
    FOREIGN KEY(id_reservation) REFERENCES reservation(id_reservation)
 );
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `start_date` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `end_date` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `created` datetime NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1=Active, 0=Block'
+) 

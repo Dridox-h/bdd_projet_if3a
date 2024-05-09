@@ -1,101 +1,96 @@
 <?php
-try {
-    $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-} catch (PDOException $e) {
-    die('Erreur de connexion : ' . $e->getMessage());
-}
+include 'Calendar.php';
+include 'db_connect.php';
 
-// Commencez la session pour utiliser $_SESSION
-session_start();
+// Initialisation du calendrier
+$calendar = null;
 
-// Vérifiez si l'utilisateur est connecté
-$is_logged_in = isset($_SESSION['id_user']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Si le formulaire est soumis, vérifiez si un club a été sélectionné
+    if (isset($_POST['liste_club']) && !empty($_POST['liste_club'])) {
+        // Vous pouvez récupérer le nom du club sélectionné dans $_POST['liste_club']
+        $selectedClub = $_POST['liste_club'];
 
-// Requête pour récupérer les réservations
-$query = 'SELECT * FROM reservation';
-$stmt = $bdd->query($query);
-$reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Vous pouvez initialiser la date du calendrier selon vos besoins
+        $calendar = new Calendar('2024-05-12');
 
-// Tableau des jours de la semaine
-$jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+        // Récupérez les événements liés au club sélectionné
+        $sqlUpdateEvent = "SELECT * FROM reservation WHERE id_court = (SELECT id_court FROM courts INNER JOIN club ON club.id_club=courts.id_club  WHERE nom_club = ?)";
+        $stmt = $conn->prepare($sqlUpdateEvent);
+            $stmt->execute([$selectedClub]);
+        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Affichage de l'emploi du temps
-echo "<div class='container'><table class='table table-bordered' style='text-align:center;' border='1'>";
-echo "<tr><th>Heure</th>";
-foreach ($jours as $jour) {
-    echo "<th>{$jour}</th>";
-}
-echo "</tr>";
-
-// Boucle sur les heures de 8h à 18h
-for ($heure = 8; $heure <= 18; $heure++) {
-    echo "<tr>";
-    echo "<td style='background:#CCCCCC; font-weight: bold;'>{$heure}h00</td>";
-
-    // Boucle sur les jours
-    for ($d = 0; $d < 5; $d++) {
-        $date_num = date("Y-m-d", mktime(0, 0, 0, 4, 22 + $d, 2024)); // Adaptez la date selon vos besoins
-        echo "<td style='padding:10px; border:1px solid #999999;'>";
-
-        // Boucle sur les réservations pour vérifier les réservations à la date et à l'heure données
-        $reservation_found = false;
-        foreach ($reservations as $reservation) {
-            echo $heure;
-            echo "</br>";
-            echo (int)date("H", strtotime($reservation['heure_debut']));
+        foreach ($events as $event) {
+            $sqlterrain = "SELECT emplacement FROM courts 
+                           INNER JOIN reservation ON courts.id_court = reservation.id_court 
+                           WHERE reservation.id_court = ?";
+            $stmt2 = $conn->prepare($sqlterrain);
+            $stmt2->execute([$event["id_court"]]);
+            $terrain = $stmt2->fetch(PDO::FETCH_ASSOC);
             
-            if ($date_num == $reservation['date_reservation'] && $heure == (int)date("H", strtotime($reservation['heure_debut']))) {
-                $heure_debut = new DateTime($reservation['heure_debut']);
-                $heure_fin = clone $heure_debut;
-                $heure_fin->add(new DateInterval('PT' . $reservation['duree'] . 'H'));
-                
-
-                // Afficher la réservation si elle correspond à la plage horaire actuelle
-                if ($heure_debut->format('H:i') == "{$heure}:00") {
-                    echo "Réservation sur le court {$reservation['id_court']}";
-                    $reservation_found = true;
-                    break;
-                }
+            // Assurez-vous de vérifier si l'emplacement existe dans $terrain
+            if ($terrain && isset($terrain["emplacement"])) {
+                $calendar->add_event(
+                    "L'événement commence à " . $event["heure_debut"] . " et dure : " . $event["duree"] . " sur le terrain : " . $terrain["emplacement"],
+                    $event['date_reservation'],
+                    1,
+                    'green'
+                );
             }
         }
-
-        // Si aucune réservation n'est trouvée, afficher "Disponible"
-        if (!$reservation_found) {
-            echo "Disponible";
-        }
-
-        echo "</td>";
     }
-
-    echo "</tr>";
 }
-echo "</table></div>";
 ?>
-
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Réservation de court de Tennis</title>
-    <link rel="stylesheet" href="./stylesheet/styles.css">
-
+    <meta charset="utf-8">
+    <title>Event Calendar</title>
+    <link href="stylesheet/style.css" rel="stylesheet" type="text/css">
+    <link href="stylesheet/calendar.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <?php if (isset($_SESSION['id_user'])) : ?>
-        <h1>Bienvenue sur le site de réservation de courts de tennis !</h1>
-    <?php else : ?>
-        <h1>Connexion</h1>
-        <form class="form-container" action="connexion.php" method="post">
-            <label for="email">Email : </label>
-            <input type="email" name="email" id="email" required>
-            <label for="password">Mot de passe</label>
-            <input type="password" name="password" id="password" required>
-            <input type="submit" name="submit" value="Connexion">
-            Vous n'êtes pas encore inscrit ? <a href="inscription.php">S'inscrire </a>
-        </form>
-    <?php endif; ?>
+    <h1>Bienvenue sur l'agenda des clubs ! </h1></br>
+    <h2>Veuiller choisir quel club vous voulez visualisez : </h2></br>
+
+
+    <form id="clubForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+        <?php
+        // Récupérez la liste des clubs pour créer le menu déroulant
+        $sqlUpdateEvent = "SELECT * FROM club";
+        $stmt = $conn->prepare($sqlUpdateEvent);
+        $stmt->execute();
+        $clubs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo '<select id="liste_club" name="liste_club">';
+        foreach ($clubs as $club) {
+            echo '<option value="' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '</option>';
+        }
+        echo '</select>';
+        
+        // Ajoutez le bouton d'envoi
+        echo '<button type="submit">Envoyer</button>';
+
+        
+        ?>
+        </form></body><br>
+
+    <input type="hidden" id="selected_club" name="selected_club" value="<?php echo isset($_POST['liste_club']) ? $_POST['liste_club'] : ''; ?>">
+    <a href="ajout_reservation.php?club=<?php echo isset($_POST['liste_club']) ? urlencode($_POST['liste_club']) : ''; ?>">Cliquez ici pour ajouter une réservation</a>
+
+    <nav class="navtop">
+        <div>
+            <h1>Event Calendar</h1>
+        </div>
+    </nav>
+    <div class="content home">
+        <?php
+        // Affichez le calendrier uniquement si un club a été sélectionné et que le formulaire a été soumis
+        if ($calendar) {
+            echo $calendar;
+        }
+        ?>
+    </div>
 </body>
 </html>
-
-
