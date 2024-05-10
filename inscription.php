@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db_connect.php';
 function email_present($email, $bdd) {
     $query = $bdd->prepare("SELECT email FROM utilisateur WHERE email = :email");
@@ -46,6 +47,7 @@ if (isset($_POST['submit'])) {
                 $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
                 $req = $bdd->prepare("INSERT INTO appartenance_club(id_user, id_club) VALUES (?,?)");
                 $req->execute([$id_user, $id_club]);
+                $_SESSION['id_user'] = $id_user;
             }
         }else{
                 $req = $bdd->prepare("SELECT id_club FROM club WHERE nom_club = ?");
@@ -53,8 +55,11 @@ if (isset($_POST['submit'])) {
                 $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
                 $req = $bdd->prepare("INSERT INTO appartenance_club(id_user, id_club) VALUES (?,?)");
                 $req->execute([$id_user, $id_club]);
+                $_SESSION['id_user'] = $id_user;
             }
         }
+        header("Location: index.php");
+        exit();
     }
 
 }
