@@ -66,6 +66,46 @@ if ($result) {
 </head>
 <body>
     <h1>Veuillez indiquer vos partenaires de jeux 3 maximun ! </h1>
+    <form action="">
+    <?php $sql = "SELECT * FROM utilisateur";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $joueurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Créer le menu déroulant des terrains
+
+    echo '<select id="joueur1" name="joueur1">';
+    echo '<option value="">Sélectionner un joueur</option>'; // Option null
+    foreach ($joueurs as $joueur) {
+        // Utiliser l'id du court et l'emplacement pour l'option
+        echo '<option value="' . htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') . '">' .
+            htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') .
+            '</option>';
+    }
+    echo '</select>';
+    
+    echo '<select id="joueur2" name="joueur2">';
+    echo '<option value="">Sélectionner un joueur</option>'; // Option null
+    foreach ($joueurs as $joueur) {
+        // Utiliser l'id du court et l'emplacement pour l'option
+        echo '<option value="' . htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') . '">' .
+            htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') .
+            '</option>';
+    }
+    echo '</select>';
+    
+    echo '<select id="joueur3" name="joueur3">';
+    echo '<option value="">Sélectionner un joueur</option>'; // Option null
+    foreach ($joueurs as $joueur) {
+        // Utiliser l'id du court et l'emplacement pour l'option
+        echo '<option value="' . htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') . '">' .
+            htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') .
+            '</option>';
+    }
+    echo '</select>';
+?>
+    <input type="submit" value="Envoyer"><br>
+</form>
 
 </body>
 </html>
