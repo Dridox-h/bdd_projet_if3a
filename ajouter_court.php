@@ -30,6 +30,9 @@ if ($club_utilisateur) {
         header("Location: gestion_courts.php");
         exit();
     }
+else {
+    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
+}
 ?>
 
 <!DOCTYPE html>
