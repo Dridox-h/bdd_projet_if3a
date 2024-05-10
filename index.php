@@ -1,18 +1,22 @@
 <?php
+
+session_start(); // Démarre la session
+
 $pdo = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 
 $today = date('Y-m-d');
 
-$query = "SELECT * FROM reservation INNER JOIN courts c ON c.id_court=reservation.id_court 
-INNER JOIN club cl ON cl.id_club=c.id_club WHERE cl. nom_club = ? ";
-
-$stmt = $pdo->prepare($query);
-$stmt->execute([$_POST['liste_club']]);
-$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$events_json = json_encode($events);
-
+if (!empty($_POST['liste_club'])) {
+    $query = "SELECT * FROM reservation INNER JOIN courts c ON c.id_court=reservation.id_court 
+    INNER JOIN club cl ON cl.id_club=c.id_club WHERE cl.nom_club = ?";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$_POST['liste_club']]);
+    $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $events_json = json_encode($events);
+}
 
 
 ?>
@@ -88,12 +92,33 @@ $events_json = json_encode($events);
     </script>
 </head>
 <body>
+<div id=MenuBarre>
+    <h3>
+        <?php if (isset($_SESSION['id_user'])) :
+            echo $_SESSION['id_user']?>
+            Connecté en tant que :
+            <?php
+            $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
+            $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+
+            $req = $bdd->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
+            $req->execute([$_SESSION['id_user']]);
+
+            $donnees = $req->fetch();
+            echo $donnees['nom'], " ", $donnees['prenom'];
+            ?>
+            <br/>
+            <a href="deconnexion.php">Déconnexion</a>
+            <a href="update_password.php">modifier mdp</a>
+            <a href="ajout_reservation.php">prendre une réservation</a>
+
+        <?php else : ?>
+            <a href="connexion.php" >Connexion</a>
+        <?php endif; ?>
+    </h3>
+</div>
 <div class="header-menu">
     <div>
-        <a href="connexion.php">se connecter</a>
-        <a href="inscription.php">s'inscrire</a>
-        <a href="update_password.php">modifier mdp</a>
-        <a href="ajout_reservation.php">prendre une réservation</a>
     </div>
 </div>
 
@@ -122,6 +147,8 @@ $events_json = json_encode($events);
     <button class="button" id="weekly-btn">Vue hebdomadaire</button>
     <button class="button" id="monthly-btn">Vue mensuelle</button>
 </div>
+
+
 <div id="calendar"></div>
 </body>
 </html>
