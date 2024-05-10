@@ -4,7 +4,8 @@
     header("Location: index.php");
     exit();
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <header>
     <meta charset="UTF-8">
     <title>Deconnexion</title>

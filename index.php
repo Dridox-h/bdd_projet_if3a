@@ -36,13 +36,24 @@ $events_json = json_encode($events);
     <script>
         $(document).ready(function() {
             var events = <?php echo $events_json; ?>;
+            
             events.forEach(function(event) {
-                var start = moment(event.start);
-                var end = moment(event.start).add(event.duree, 'minutes');
-                event.start = start.format();
-                event.end = end.format();
-                event.title = event.club;
-                event.description = event.club;
+                var start = moment(event.start_datetime);
+    var end = moment(event.end_datetime);
+    event.start = start.format();
+    event.end = end.format();
+    event.title = 'cours réservé';
+    
+    // Calculer la durée entre les dates de début et de fin
+    var duration = moment.duration(end.diff(start));
+    
+    // Formater la durée en heures, minutes et secondes
+    var hours = Math.floor(duration.asHours());
+    var minutes = duration.minutes();
+    var seconds = duration.seconds();
+    
+    // Créer la description en utilisant la durée calculée
+    event.description = "Le cours dure " + hours + " heures, " + minutes + " minutes et " + seconds + " secondes.";
             });
 
             $('#calendar').fullCalendar({
@@ -82,6 +93,7 @@ $events_json = json_encode($events);
         <a href="connexion.php">se connecter</a>
         <a href="inscription.php">s'inscrire</a>
         <a href="update_password.php">modifier mdp</a>
+        <a href="ajout_reservation.php">prendre une réservation</a>
     </div>
 </div>
 

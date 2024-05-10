@@ -1,8 +1,6 @@
 <?php
 session_start(); 
 
-$message = '';
-
 try {
     $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
 } catch (PDOException $e) {
@@ -21,7 +19,7 @@ if (isset($_POST['submit'])) {
         if ($user) {
             if ($password == $user['password']) {
                 $_SESSION['id_user'] = $user['id_user'];
-                header("Location: index.php"); 
+                header("Location: index.php");
                 exit();
             } else {
                 $message = 'Mauvais mot de passe';
