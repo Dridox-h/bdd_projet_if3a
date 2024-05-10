@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db_connect.php';
 function email_present($email, $bdd) {
     $query = $bdd->prepare("SELECT email FROM utilisateur WHERE email = :email");
@@ -34,7 +35,33 @@ if (isset($_POST['submit'])) {
     }else {
         $req = $bdd->prepare("INSERT INTO utilisateur(nom, prenom, email, password) VALUES (?,?,?,?);");
         $req->execute([$nom, $prenom,$email,$password]);
+        $req=$bdd->prepare("SELECT id_user FROM utilisateur WHERE email = ?");
+        $req->execute([$email]);
+        $id_user = $req->fetch()["id_user"];
+        if (isset($_POST['liste_club'])) {
+            $clubs = $_POST['liste_club'];
+            if (is_array($clubs)){
+            foreach ($clubs as $club) {
+                $req = $bdd->prepare("SELECT id_club FROM club WHERE nom_club = ?");
+                $req->execute([$club]);
+                $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
+                $req = $bdd->prepare("INSERT INTO appartenance_club(id_user, id_club) VALUES (?,?)");
+                $req->execute([$id_user, $id_club]);
+                $_SESSION['id_user'] = $id_user;
+            }
+        }else{
+                $req = $bdd->prepare("SELECT id_club FROM club WHERE nom_club = ?");
+                $req->execute([$clubs]);
+                $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
+                $req = $bdd->prepare("INSERT INTO appartenance_club(id_user, id_club) VALUES (?,?)");
+                $req->execute([$id_user, $id_club]);
+                $_SESSION['id_user'] = $id_user;
+            }
+        }
+        header("Location: index.php");
+        exit();
     }
+
 }
 
 

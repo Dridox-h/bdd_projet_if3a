@@ -1,58 +1,116 @@
-CREATE TABLE utilisateur(
-   id_user INT AUTO_INCREMENT PRIMARY KEY,
-   nom VARCHAR(30) NOT NULL,
-   prenom VARCHAR(30) NOT NULL,
-   password VARCHAR(50) NOT NULL,
-   email VARCHAR(50) NOT NULL
-);
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
-CREATE TABLE club(
-   id_club INT AUTO_INCREMENT PRIMARY KEY,
-   nom_club VARCHAR(50) NOT NULL,
-   ville VARCHAR(50) NOT NULL
-);
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
-CREATE TABLE courts(
-   id_court INT AUTO_INCREMENT PRIMARY KEY,
-   type_surface VARCHAR(50),
-   emplacement VARCHAR(50),
-   id_club INT NOT NULL,
-   FOREIGN KEY(id_club) REFERENCES club(id_club)
-);
 
-CREATE TABLE reservation(
-   id_reservation INT AUTO_INCREMENT PRIMARY KEY,
-   date_reservation DATE,
-   heure_debut TIME,
-   duree TIME,
-   id_court INT NOT NULL,
-   FOREIGN KEY(id_court) REFERENCES courts(id_court)
-);
+CREATE TABLE `appartenance_club` (
+  `id_user` int(11) NOT NULL,
+  `id_club` int(11) NOT NULL,
+  `role_adherent` varchar(50) NOT NULL DEFAULT 'adherant'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE appartenance_club(
-   id_user INT,
-   id_club INT,
-   role_adherent VARCHAR(50) NOT NULL,
-   PRIMARY KEY(id_user, id_club),
-   FOREIGN KEY(id_user) REFERENCES utilisateur(id_user),
-   FOREIGN KEY(id_club) REFERENCES club(id_club)
-);
+CREATE TABLE `club` (
+  `id_club` int(11) NOT NULL,
+  `nom_club` varchar(50) NOT NULL,
+  `ville` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE Inscrits(
-   id_user INT,
-   id_reservation INT,
-   role VARCHAR(50),
-   PRIMARY KEY(id_user, id_reservation),
-   FOREIGN KEY(id_user) REFERENCES utilisateur(id_user),
-   FOREIGN KEY(id_reservation) REFERENCES reservation(id_reservation)
-);
+CREATE TABLE `courts` (
+  `id_court` int(11) NOT NULL,
+  `type_surface` varchar(50) DEFAULT NULL,
+  `emplacement` varchar(50) DEFAULT NULL,
+  `id_club` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `events` (
   `id` int(11) NOT NULL,
-  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `start_date` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `end_date` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `start_date` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `end_date` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `created` datetime NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1=Active, 0=Block'
-) 
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=Active, 0=Block'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `inscrits` (
+  `id_user` int(11) NOT NULL,
+  `id_reservation` int(11) NOT NULL,
+  `role` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `reservation` (
+  `id_reservation` int(11) NOT NULL,
+  `date_reservation` date DEFAULT NULL,
+  `heure_debut` time DEFAULT NULL,
+  `duree` time DEFAULT NULL,
+  `id_court` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `utilisateur` (
+  `id_user` int(11) NOT NULL,
+  `nom` varchar(30) NOT NULL,
+  `prenom` varchar(30) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+ALTER TABLE `appartenance_club`
+  ADD PRIMARY KEY (`id_user`,`id_club`),
+  ADD KEY `id_club` (`id_club`);
+
+ALTER TABLE `club`
+  ADD PRIMARY KEY (`id_club`);
+
+ALTER TABLE `courts`
+  ADD PRIMARY KEY (`id_court`),
+  ADD KEY `id_club` (`id_club`);
+
+ALTER TABLE `inscrits`
+  ADD PRIMARY KEY (`id_user`,`id_reservation`),
+  ADD KEY `id_reservation` (`id_reservation`);
+
+ALTER TABLE `reservation`
+  ADD PRIMARY KEY (`id_reservation`),
+  ADD KEY `id_court` (`id_court`);
+
+ALTER TABLE `utilisateur`
+  ADD PRIMARY KEY (`id_user`);
+
+
+ALTER TABLE `club`
+  MODIFY `id_club` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `courts`
+  MODIFY `id_court` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `reservation`
+  MODIFY `id_reservation` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `utilisateur`
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT;
+
+
+ALTER TABLE `appartenance_club`
+  ADD CONSTRAINT `appartenance_club_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `utilisateur` (`id_user`),
+  ADD CONSTRAINT `appartenance_club_ibfk_2` FOREIGN KEY (`id_club`) REFERENCES `club` (`id_club`);
+
+ALTER TABLE `courts`
+  ADD CONSTRAINT `courts_ibfk_1` FOREIGN KEY (`id_club`) REFERENCES `club` (`id_club`);
+
+ALTER TABLE `inscrits`
+  ADD CONSTRAINT `inscrits_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `utilisateur` (`id_user`),
+  ADD CONSTRAINT `inscrits_ibfk_2` FOREIGN KEY (`id_reservation`) REFERENCES `reservation` (`id_reservation`);
+
+ALTER TABLE `reservation`
+  ADD CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`id_court`) REFERENCES `courts` (`id_court`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
