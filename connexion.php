@@ -20,7 +20,6 @@ if (isset($_POST['submit'])) {
 
         if ($user) {
             if ($password == $user['password']) {
-                session_start();
                 $_SESSION['id_user'] = $user['id_user'];
                 header("Location: index.php"); 
                 exit();

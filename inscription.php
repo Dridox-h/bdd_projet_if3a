@@ -1,5 +1,5 @@
 <?php
-
+include 'db_connect.php';
 function email_present($email, $bdd) {
     $query = $bdd->prepare("SELECT email FROM utilisateur WHERE email = :email");
 
@@ -66,6 +66,20 @@ if (isset($_POST['submit'])) {
             <input type="email" name="email" id="email" required>
             <label for="password">Mot de passe</label>
             <input type="password" name="password" id="password" required>
+            <br/>
+            <label for="liste_club">Clubs</label>
+            <?php
+            // Récupérez la liste des clubs pour créer le menu déroulant
+            $stmt = $conn->prepare("SELECT * FROM club");
+            $stmt->execute();
+            $clubs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo '<select multiple id="liste_club" name="liste_club">';
+            foreach ($clubs as $club) {
+                echo '<option value="' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '</option>';
+            }
+            echo '</select>';?>
+            <br/>
             <input type="submit" name="submit" value="S'inscrire">
             Vous avez déjà un compte ? <a href="connexion.php">Se connecter </a>
         </form>

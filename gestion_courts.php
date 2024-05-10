@@ -1,10 +1,29 @@
 <?php
 try {
     $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 } catch (PDOException $e) {
     die('Erreur de connexion : ' . $e->getMessage());
 }
+session_start(); 
+$id_user = $_SESSION['id_user'];
+$req_club = $bdd->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
+$req_club->execute([$id_user]);
+$club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
+
+// Vérifiez si l'utilisateur est administrateur d'un club
+if ($club_utilisateur) {
+
+    // Récupérez les courts du club de l'utilisateur
+    $req_courts = $bdd->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+                          FROM courts c 
+                          INNER JOIN club cl ON c.id_club = cl.id_club 
+                          WHERE c.id_club = ?");
+    $req_courts->execute([$club_utilisateur['id_club']]);
+    $courts = $req_courts->fetchAll(PDO::FETCH_ASSOC); 
+} else {
+    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
+}
+
 
 if (isset($_POST['id_court'])) {
     $id_court = $_POST['id_court'];
@@ -40,9 +59,10 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+<h1>Tableau des courts</h1>
 
-<h2>Tableau des courts</h2>
-<table>
+<?php if ($club_utilisateur) { ?>
+    <table>
     <thead>
         <tr>
             <th>Emplacement</th>
@@ -53,7 +73,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($courts as $court) { ?>
+    <?php foreach ($courts as $court) { ?>
             <tr>
                 <td><?php echo $court['emplacement']; ?></td>
                 <td><?php echo $court['nom_club']; ?></td>
@@ -67,12 +87,14 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
                     </form>
                 </td>
             </tr>
-        <?php } ?>
-
-        
+    <?php } ?>
     </tbody>
-</table>
+    </table>
+<?php } ?>
+
+
 <a href="ajouter_court.php">Ajouter une court</a>
+
 
 </body>
 </html>

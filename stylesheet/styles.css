@@ -33,3 +33,11 @@ h1 {
     flex-direction: column;
     justify-content: center;
 }
+
+#MenuBarre{
+    position: sticky;
+    top: 0;
+    background-color: coral;
+    padding:20px;
+    border-bottom: 5px solid #b84315;
+}
