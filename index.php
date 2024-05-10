@@ -1,63 +1,93 @@
 <?php
-include 'Calendar.php';
-include 'db_connect.php';
+$pdo = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 
-// Initialisation du calendrier
-$calendar = null;
+$today = date('Y-m-d');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Si le formulaire est soumis, vérifiez si un club a été sélectionné
-    if (isset($_POST['liste_club']) && !empty($_POST['liste_club'])) {
-        // Vous pouvez récupérer le nom du club sélectionné dans $_POST['liste_club']
-        $selectedClub = $_POST['liste_club'];
+$query = "SELECT * FROM reservation INNER JOIN courts c ON c.id_court=reservation.id_court 
+INNER JOIN club cl ON cl.id_club=c.id_club WHERE cl. nom_club = ? ";
 
-        // Vous pouvez initialiser la date du calendrier selon vos besoins
-        $calendar = new Calendar('2024-05-12');
+$stmt = $pdo->prepare($query);
+$stmt->execute([$_POST['liste_club']]);
+$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Récupérez les événements liés au club sélectionné
-        $sqlUpdateEvent = "SELECT * FROM reservation WHERE id_court = (SELECT id_court FROM courts INNER JOIN club ON club.id_club=courts.id_club  WHERE nom_club = ?)";
-        $stmt = $conn->prepare($sqlUpdateEvent);
-            $stmt->execute([$selectedClub]);
-        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$events_json = json_encode($events);
 
-        foreach ($events as $event) {
-            $sqlterrain = "SELECT emplacement FROM courts 
-                           INNER JOIN reservation ON courts.id_court = reservation.id_court 
-                           WHERE reservation.id_court = ?";
-            $stmt2 = $conn->prepare($sqlterrain);
-            $stmt2->execute([$event["id_court"]]);
-            $terrain = $stmt2->fetch(PDO::FETCH_ASSOC);
-            
-            // Assurez-vous de vérifier si l'emplacement existe dans $terrain
-            if ($terrain && isset($terrain["emplacement"])) {
-                $calendar->add_event(
-                    "L'événement commence à " . $event["heure_debut"] . " et dure : " . $event["duree"] . " sur le terrain : " . $terrain["emplacement"],
-                    $event['date_reservation'],
-                    1,
-                    'green'
-                );
-            }
-        }
-    }
-}
+
+
 ?>
 
+
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <title>Event Calendar</title>
-    <link href="stylesheet/style.css" rel="stylesheet" type="text/css">
-    <link href="stylesheet/calendar.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier de la journée</title>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/fr.js'></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+    <script>
+        $(document).ready(function() {
+            var events = <?php echo $events_json; ?>;
+            events.forEach(function(event) {
+                var start = moment(event.start);
+                var end = moment(event.start).add(event.duree, 'minutes');
+                event.start = start.format();
+                event.end = end.format();
+                event.title = event.club;
+                event.description = event.club;
+            });
+
+            $('#calendar').fullCalendar({
+                defaultView: 'agendaDay',
+                defaultDate: moment(),
+                editable: false,
+                eventLimit: false,
+                events: events,
+                eventClick: function(event) {
+                    alert('Description: ' + event.description);
+                },
+            });
+
+            function changeView(view) {
+                $('#calendar').fullCalendar('changeView', view);
+            }
+
+            $('#daily-btn').click(function() {
+                changeView('agendaDay');
+            });
+
+            $('#weekly-btn').click(function() {
+                changeView('agendaWeek');
+            });
+
+            $('#monthly-btn').click(function() {
+                changeView('month');
+            });
+        });
+
+        
+    </script>
 </head>
 <body>
-    <h1>Bienvenue sur l'agenda des clubs ! </h1></br>
-    <h2>Veuiller choisir quel club vous voulez visualisez : </h2></br>
+<div class="header-menu">
+    <div>
+        <a href="connexion.php">se connecter</a>
+        <a href="inscription.php">s'inscrire</a>
+        <a href="update_password.php">modifier mdp</a>
+    </div>
+</div>
 
-
-    <form id="clubForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+<form id="clubForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
         <?php
-        // Récupérez la liste des clubs pour créer le menu déroulant
+        require 'db_connect.php';
         $sqlUpdateEvent = "SELECT * FROM club";
         $stmt = $conn->prepare($sqlUpdateEvent);
         $stmt->execute();
@@ -69,28 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         echo '</select>';
         
-        // Ajoutez le bouton d'envoi
         echo '<button type="submit">Envoyer</button>';
 
         
         ?>
         </form></body><br>
-
-    <input type="hidden" id="selected_club" name="selected_club" value="<?php echo isset($_POST['liste_club']) ? $_POST['liste_club'] : ''; ?>">
-    <a href="ajout_reservation.php?club=<?php echo isset($_POST['liste_club']) ? urlencode($_POST['liste_club']) : ''; ?>">Cliquez ici pour ajouter une réservation</a>
-
-    <nav class="navtop">
-        <div>
-            <h1>Event Calendar</h1>
-        </div>
-    </nav>
-    <div class="content home">
-        <?php
-        // Affichez le calendrier uniquement si un club a été sélectionné et que le formulaire a été soumis
-        if ($calendar) {
-            echo $calendar;
-        }
-        ?>
-    </div>
+<h3>Calendrier de la journée</h3>
+<div class="menu_calendar">
+    <button class="button" id="daily-btn">Vue quotidienne</button>
+    <button class="button" id="weekly-btn">Vue hebdomadaire</button>
+    <button class="button" id="monthly-btn">Vue mensuelle</button>
+</div>
+<div id="calendar"></div>
 </body>
 </html>

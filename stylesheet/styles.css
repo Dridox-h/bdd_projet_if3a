@@ -41,3 +41,112 @@ h1 {
     padding:20px;
     border-bottom: 5px solid #b84315;
 }
+
+#calendar {
+    width: 80%;
+    margin: 40px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.fc-header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.fc-body {
+    padding: 20px;
+}
+
+.fc-event {
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #337ab7;
+    color: #fff;
+    cursor: pointer;
+}
+
+.fc-event:hover {
+    background-color: #23527c;
+}
+
+.fc-axis {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.fc-day-header {
+    background-color: #1E90FF;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.fc-day {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.fc-today {
+    background-color: #1E90FF;
+}
+
+.fc-button {
+    background-color: #337ab7;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.header-menu {
+    background-color: #007bff;
+    padding: 10px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-menu a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.header-menu img {
+    width: 40px; 
+    height: auto;
+    margin-right: 10px;
+}
+
+h3 {
+   
+    font-size: 24px; 
+    font-weight: bold; 
+    color: #000000; 
+    text-align: center;
+    padding: 10px;
+   
+}
+
+.button {
+    background-color: #337ab7;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px; 
+}
+
+.menu_calendar{
+    text-align: center;
+}
