@@ -16,7 +16,7 @@ $is_logged_in = isset($_SESSION['id_user']);
 
 
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Réservation de court de Tennis</title>
@@ -26,7 +26,8 @@ $is_logged_in = isset($_SESSION['id_user']);
 <body>
 <div id=MenuBarre>
     <h3>
-    <?php if (isset($_SESSION['id_user'])) : ?>
+    <?php if (isset($_SESSION['id_user'])) :
+        echo $_SESSION['id_user']?>
         Connecté en tant que :
             <?php
             $req = $bdd->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
@@ -34,6 +35,8 @@ $is_logged_in = isset($_SESSION['id_user']);
             $donnees = $req->fetch();
             echo $donnees['nom'], " ", $donnees['prenom'];
             ?>
+    <br/>
+        <a href="deconnexion.php">Déconnexion</a>
         <?php else : ?>
         <a href="connexion.php" >Connexion</a>
         <?php endif; ?>

@@ -24,7 +24,6 @@ if (isset($_POST['submit'])) {
             // Verify password
             if ($password == $user['password']) {
                 // Password is correct, set session variable and redirect to index.php
-                session_start();
                 $_SESSION['id_user'] = $user['id_user'];
                 header("Location: index.php"); 
                 exit();
