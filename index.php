@@ -93,29 +93,43 @@ if (!empty($_POST['liste_club'])) {
 </head>
 <body>
 <div id=MenuBarre>
-    <h3>
-        <?php if (isset($_SESSION['id_user'])) :
-            echo $_SESSION['id_user']?>
-            Connecté en tant que :
-            <?php
-            $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-            $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+<h3>
+<?php 
+if (isset($_SESSION['id_user'])) :
+    echo $_SESSION['id_user']; ?>
+    Connecté en tant que :
+    <?php
+    $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 
-            $req = $bdd->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
-            $req->execute([$_SESSION['id_user']]);
+    $req = $bdd->prepare("SELECT nom, prenom FROM utilisateur WHERE id_user = ?");
+    $req->execute([$_SESSION['id_user']]);
+    $donnees = $req->fetch();
+    echo $donnees['nom'] . " " . $donnees['prenom'];
 
-            $donnees = $req->fetch();
-            echo $donnees['nom'], " ", $donnees['prenom'];
-            ?>
-            <br/>
-            <a href="deconnexion.php">Déconnexion</a>
-            <a href="update_password.php">modifier mdp</a>
-            <a href="ajout_reservation.php">prendre une réservation</a>
+    // Récupérez les courts du club de l'utilisateur
+    $req_courts = $bdd->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+    FROM courts c 
+    INNER JOIN club cl ON c.id_club = cl.id_club 
+    WHERE c.id_club = ?");
+    $req_courts->execute([$_SESSION['id_user']]);
+    $courts = $req_courts->fetchAll(PDO::FETCH_ASSOC); 
 
-        <?php else : ?>
-            <a href="connexion.php" >Connexion</a>
-        <?php endif; ?>
-    </h3>
+    if ($courts) { ?>
+        <a href="gestion_courts.php">Gestion des courts</a>
+        <a href="gestion_adherents.php">Gestion des adhérents</a>
+
+    <?php } ?>
+
+    <br/>
+    <a href="deconnexion.php">Déconnexion</a>
+    <a href="update_password.php">Modifier le mot de passe</a>
+    <a href="ajout_reservation.php">Prendre une réservation</a>
+
+<?php else : ?>
+    <a href="connexion.php">Connexion</a>
+<?php endif; ?>
+</h3>
 </div>
 <div class="header-menu">
     <div>
