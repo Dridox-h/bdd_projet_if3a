@@ -1,7 +1,7 @@
 <?php
 include 'Calendar.php';
 include 'db_connect.php';
-
+session_start();
 // Initialisation du calendrier
 $calendar = null;
 
@@ -55,11 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div id=MenuBarre>
     <h3>
-        <?php if (isset($_SESSION['id_user'])) :
-            echo $_SESSION['id_user']?>
+        <?php if (isset($_SESSION['id_user'])) :?>
             Connecté en tant que :
             <?php
-            $req = $bdd->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
+            $req = $conn->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
             $req->execute([$_SESSION['id_user']]);
             $donnees = $req->fetch();
             echo $donnees['nom'], " ", $donnees['prenom'];
