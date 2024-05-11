@@ -128,6 +128,7 @@ if (!empty($_POST['liste_club'])) {
     if ($courts) { ?>
         <a href="gestion_courts.php">Gestion des courts</a><br/>
         <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
+        <a href="statistique.php">Statistiques du club</a><br/>
 
     <?php } ?>
         <!-- si non-connecté on affiche la possibilité de se connecter -->

@@ -43,7 +43,7 @@ $stmt_j3->execute([$j_3]);
 $id_user_j3_row = $stmt_j3->fetch();
 $id_user_j3 = $id_user_j3_row['id_user']; // Récupérez l'ID de joueur 3
 
-echo $j_1,$j_2,$j_3;
+//echo $j_1,$j_2,$j_3;
 
 if (empty($j_3) &&(!empty($j_2) || !empty($j_1))) {
     echo "j-3 est vide";
@@ -102,7 +102,14 @@ if (empty($j_3) &&(!empty($j_2) || !empty($j_1))) {
             $stmt = $conn->prepare($sql);
         
             $result = $stmt->execute([$id_user_j3,$id_reservation,'joueur']);
-            echo "Aucune des variables n'est vide";
+
+            
+            $sql = "INSERT INTO inscrits (id_user,id_reservation,role) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+        
+            $result = $stmt->execute([$userId,$id_reservation,'leader']);
+            echo "réservation effectué";
+            echo "<a href='index.php'> revenir au menu <a>";
         }
     }
 }
