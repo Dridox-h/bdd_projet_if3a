@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Valider la transaction
         $conn->commit();
+        header("Location: index.php");
 
-        echo "Le club a été ajouté avec succès.";
     } catch (PDOException $e) {
         // En cas d'erreur, annuler la transaction
         $conn->rollBack();
@@ -54,6 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Ajouter un club</title>
 </head>
 <body>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
     <h1>Ajouter un club</h1>
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="nom_club">Nom du club :</label><br>
