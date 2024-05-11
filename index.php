@@ -138,21 +138,22 @@ if (!empty($_POST['liste_club'])) {
             <?php endif; ?>
         </h3>
     </div>
-
-    <!-- accès au Pannel admin si user admin d'au moins un club -->
-    <?php $adm_club = $conn->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
-    $adm_club->execute([$_SESSION['id_user']]);
-    $club_utilisateur = $adm_club->fetch(PDO::FETCH_ASSOC);
-    if ($club_utilisateur){?>
-        <div id="adminBarre">
-            <h4>
-                Espace Admin
-                    <br/>
-                <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
-                <a href="gestion_courts.php">Gestion des courts de tennis</a>
-            </h4>
-        </div>
-    <?php }?>
+    <?php if (isset($_SESSION['id_user'])) {?>
+        <!-- accès au Pannel admin si user admin d'au moins un club -->
+        <?php $adm_club = $conn->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
+        $adm_club->execute([$_SESSION['id_user']]);
+        $club_utilisateur = $adm_club->fetch(PDO::FETCH_ASSOC);
+        if ($club_utilisateur){?>
+            <div id="adminBarre">
+                <h4>
+                    Espace Admin
+                        <br/>
+                    <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
+                    <a href="gestion_courts.php">Gestion des courts de tennis</a>
+                </h4>
+            </div>
+        <?php }
+    }?>
 
 
     <!-- liste récupérant tous les noms de club, en faire une liste et récupérer quel agenda de club afficher -->
