@@ -1,30 +1,51 @@
 <?php
 // Inclure le fichier de connexion à la base de données
 include 'db_connect.php';
+session_start(); 
 
-// Requête pour récupérer le nombre total d'adhérents
-$sql_total_adherents = "SELECT COUNT(*) AS total_adherents FROM utilisateur";
+$id_user = $_SESSION['id_user'];
+
+// Requête pour récupérer l'identifiant et le nom du club de l'utilisateur
+$sql_club_info = "SELECT club.id_club, club.nom_club FROM club
+                INNER JOIN appartenance_club ac ON ac.id_club = club.id_club
+                INNER JOIN utilisateur ut ON ut.id_user = ac.id_user
+                WHERE ut.id_user = ?";
+$stmt_club_info = $conn->prepare($sql_club_info);
+$stmt_club_info->execute([$id_user]);    
+$club_info = $stmt_club_info->fetch(PDO::FETCH_ASSOC);
+
+$club_id = $club_info['id_club'];
+$club_name = $club_info['nom_club'];
+
+// Requête pour récupérer le nombre total d'adhérents dans le club
+$sql_total_adherents = "SELECT COUNT(*) AS total_adherents FROM utilisateur
+                        INNER JOIN appartenance_club ac ON utilisateur.id_user = ac.id_user
+                        WHERE ac.id_club = ?";
 $stmt_total_adherents = $conn->prepare($sql_total_adherents);
-$stmt_total_adherents->execute();
+$stmt_total_adherents->execute([$club_id]);
 $total_adherents = $stmt_total_adherents->fetch(PDO::FETCH_ASSOC)['total_adherents'];
 
-// Requête pour récupérer le nombre total d'heures réservées sur l'année par adhérent
-$sql_heures_par_adherent = "SELECT ut.nom, SUM(TIMESTAMPDIFF(HOUR, start_datetime, end_datetime)) AS heures_reservees
+// Requête pour récupérer le nombre total d'heures réservées sur l'année par adhérent dans le club
+$sql_heures_par_adherent = "SELECT utilisateur.nom, SUM(TIMESTAMPDIFF(HOUR, reservation.start_datetime, reservation.end_datetime)) AS heures_reservees
                             FROM reservation
-                            INNER JOIN inscrits i ON i.id_reservation = reservation.id_reservation
-                            INNER JOIN utilisateur ut ON ut.id_user = i.id_user
-                            GROUP BY ut.nom";
+                            INNER JOIN inscrits ON reservation.id_reservation = inscrits.id_reservation
+                            INNER JOIN utilisateur ON inscrits.id_user = utilisateur.id_user
+                            INNER JOIN appartenance_club ON utilisateur.id_user = appartenance_club.id_user
+                            WHERE appartenance_club.id_club = ?
+                            GROUP BY utilisateur.nom";
 $stmt_heures_par_adherent = $conn->prepare($sql_heures_par_adherent);
-$stmt_heures_par_adherent->execute();
+$stmt_heures_par_adherent->execute([$club_id]);
 $heures_par_adherent = $stmt_heures_par_adherent->fetchAll(PDO::FETCH_ASSOC);
 
-// Requête pour récupérer le taux de réservation moyen de chaque court par semaine
-$sql_taux_reservation_court = "SELECT c.id_court, c.emplacement, AVG(TIMESTAMPDIFF(HOUR, start_datetime, end_datetime)) AS taux_reservation
-                                FROM courts c
-                                INNER JOIN reservation r ON c.id_court = r.id_court
-                                GROUP BY c.id_court";
+// Requête pour récupérer le taux de réservation moyen de chaque court par semaine dans le club
+$sql_taux_reservation_court = "SELECT courts.emplacement, AVG(TIMESTAMPDIFF(HOUR, reservation.start_datetime, reservation.end_datetime)) AS taux_reservation
+                                FROM courts
+                                INNER JOIN reservation ON courts.id_court = reservation.id_court
+                                INNER JOIN appartenance_club ON courts.id_club = appartenance_club.id_club
+                                WHERE appartenance_club.id_club = ?
+                                GROUP BY courts.emplacement";
 $stmt_taux_reservation_court = $conn->prepare($sql_taux_reservation_court);
-$stmt_taux_reservation_court->execute();
+$stmt_taux_reservation_court->execute([$club_id]);
 $taux_reservation_court = $stmt_taux_reservation_court->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
@@ -53,11 +74,11 @@ $taux_reservation_court = $stmt_taux_reservation_court->fetchAll(PDO::FETCH_ASSO
     </style>
 </head>
 <body>
-    <h1>Statistiques</h1>
+    <h1>Statistiques du Club "<?php echo $club_name; ?>"</h1>
 
-    <h2>Nombre total d'adhérents : <?php echo $total_adherents; ?></h2>
+    <h2>Nombre total d'adhérents dans le Club : <?php echo $total_adherents; ?></h2>
 
-    <h2>Nombre d'heures réservées sur l'année par adhérent :</h2>
+    <h2>Nombre d'heures réservées sur l'année par adhérent dans le Club :</h2>
     <table>
         <thead>
             <tr>
@@ -68,14 +89,14 @@ $taux_reservation_court = $stmt_taux_reservation_court->fetchAll(PDO::FETCH_ASSO
         <tbody>
         <?php foreach ($heures_par_adherent as $row): ?>
         <tr>
-            <td><?php if(isset($row['id_user'])) echo $row['id_user']; ?></td>
+            <td><?php echo $row['nom']; ?></td>
             <td><?php echo $row['heures_reservees']; ?></td>
         </tr>
     <?php endforeach; ?>
         </tbody>
     </table>
 
-    <h2>Taux de réservation moyen de chaque court par semaine :</h2>
+    <h2>Taux de réservation moyen de chaque court par semaine dans le Club :</h2>
     <table>
         <thead>
             <tr>
