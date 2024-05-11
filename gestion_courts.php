@@ -41,8 +41,10 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+
     <meta charset="UTF-8">
     <title>Tableau des courts</title>
+    <link href="stylesheet/styles.css" rel="stylesheet">
     <style>
         table {
             border-collapse: collapse;
@@ -59,42 +61,43 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
-<h1>Tableau des courts</h1>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
 
-<?php if ($club_utilisateur) { ?>
-    <table>
-    <thead>
-        <tr>
-            <th>Emplacement</th>
-            <th>Nom du club</th>
-            <th>Type de surface</th>
-            <th>Ville</th>
-            <th>Actions</th> 
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($courts as $court) { ?>
+    <h1>Tableau des courts</h1>
+
+    <?php if ($club_utilisateur) { ?>
+        <table>
+        <thead>
             <tr>
-                <td><?php echo $court['emplacement']; ?></td>
-                <td><?php echo $court['nom_club']; ?></td>
-                <td><?php echo $court['type_surface']; ?></td>
-                <td><?php echo $court['ville']; ?></td>
-                <td>
-                    <a href="modifier_court.php?id=<?php echo $court['id_court']; ?>">Modifier</a>
-                    <form method="POST" style="display:inline;">
-                        <input type="hidden" name="id_court" value="<?php echo $court['id_court']; ?>">
-                        <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce court ?')">Supprimer</button>
-                    </form>
-                </td>
+                <th>Emplacement</th>
+                <th>Nom du club</th>
+                <th>Type de surface</th>
+                <th>Ville</th>
+                <th>Actions</th>
             </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($courts as $court) { ?>
+                <tr>
+                    <td><?php echo $court['emplacement']; ?></td>
+                    <td><?php echo $court['nom_club']; ?></td>
+                    <td><?php echo $court['type_surface']; ?></td>
+                    <td><?php echo $court['ville']; ?></td>
+                    <td>
+                        <a href="modifier_court.php?id=<?php echo $court['id_court']; ?>">Modifier</a>
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="id_court" value="<?php echo $court['id_court']; ?>">
+                            <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce court ?')">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+        <?php } ?>
+        </tbody>
+        </table>
     <?php } ?>
-    </tbody>
-    </table>
-<?php } ?>
+    <a href="ajouter_court.php">Ajouter une court</a>
 
-
-<a href="ajouter_court.php">Ajouter une court</a>
-
-
-</body>
+    </body>
 </html>
