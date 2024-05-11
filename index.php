@@ -17,8 +17,6 @@ if (!empty($_POST['liste_club'])) {
     
     $events_json = json_encode($events);
 }
-
-
 ?>
 
 
@@ -30,6 +28,7 @@ if (!empty($_POST['liste_club'])) {
     <title>Calendrier de la journée</title>
 
     <link href="stylesheet/styles.css" rel="stylesheet"/>
+
     <!--Ajout de la libraire FullCalendar pour utiliser un calendrier -->
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css' rel='stylesheet' media='print' />
@@ -97,79 +96,94 @@ if (!empty($_POST['liste_club'])) {
 </head>
 <body>
 
-<!-- ajout de la barre de naviagation -->
-<div id=MenuBarre>
-    <h3> 
-        <!-- La barre va afficher si l'utilisateur est connecté et lui indiquer quel page il peut utiliser sinon elle demandera de se connecter -->
-        <?php if (isset($_SESSION['id_user'])) :?>
-            Connecté en tant que :
+    <!-- ajout de la barre de naviagation -->
+    <div id=MenuBarre>
+        <h3>
+            <!-- La barre va afficher si l'utilisateur est connecté et lui indiquer quel page il peut utiliser sinon elle demandera de se connecter -->
+            <?php if (isset($_SESSION['id_user'])) :?>
+                Connecté en tant que :
+                <?php
+                $req = $conn->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
+                $req->execute([$_SESSION['id_user']]);
+                $donnees = $req->fetch();
+                echo $donnees['nom'], " ", $donnees['prenom'];
+                ?>
+                <br/>
+                <a href="deconnexion.php">Déconnexion</a>
+                <br/>
+                <a href="update_password.php">Modifier le mot de passe</a>
+                <br/>
+                <a href="ajout_reservation.php">Prendre une réservation</a><br/>
+
+                <a href="ajouter_club.php">Ajouter un club</a>
+
+                <?php
+        // Récupérez les courts du club de l'utilisateur pour donner la possibilité de manager les terrains et membres
+        $req_courts = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+        FROM courts c 
+        INNER JOIN club cl ON c.id_club = cl.id_club 
+        WHERE c.id_club = ?");
+        $req_courts->execute([$_SESSION['id_user']]);
+        $courts = $req_courts->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($courts) { ?>
+            <a href="gestion_courts.php">Gestion des courts</a><br/>
+            <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
+            <a href="statistique.php">Statistiques du club</a><br/>
+
+        <?php } ?>
+            <!-- si non-connecté on affiche la possibilité de se connecter -->
+            <?php else : ?>
+                <a href="connexion.php" >Connexion</a>
+            <?php endif; ?>
+        </h3>
+    </div>
+
+    <!-- accès au Pannel admin si user admin d'au moins un club -->
+    <?php $adm_club = $conn->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
+    $adm_club->execute([$_SESSION['id_user']]);
+    $club_utilisateur = $adm_club->fetch(PDO::FETCH_ASSOC);
+    if ($club_utilisateur){?>
+        <div id="adminBarre">
+            <h4>
+                Espace Admin
+                    <br/>
+                <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
+                <a href="gestion_courts.php">Gestion des courts de tennis</a>
+            </h4>
+        </div>
+    <?php }?>
+
+
+    <!-- liste récupérant tous les noms de club, en faire une liste et récupérer quel agenda de club afficher -->
+    <form id="clubForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
             <?php
-            $req = $conn->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
-            $req->execute([$_SESSION['id_user']]);
-            $donnees = $req->fetch();
-            echo $donnees['nom'], " ", $donnees['prenom'];
+            require 'db_connect.php';
+            $sqlUpdateEvent = "SELECT * FROM club";
+            $stmt = $conn->prepare($sqlUpdateEvent);
+            $stmt->execute();
+            $clubs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo '<select id="liste_club" name="liste_club">';
+            foreach ($clubs as $club) {
+                echo '<option value="' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '</option>';
+            }
+            echo '</select>';
+
+            echo '<button type="submit">Envoyer</button>';
+
+
             ?>
-            <br/>
-            <a href="deconnexion.php">Déconnexion</a>
-            <br/>
-            <a href="update_password.php">Modifier le mot de passe</a>
-            <br/>
-            <a href="ajout_reservation.php">Prendre une réservation</a><br/>
-
-            <a href="ajouter_club.php">Ajouter un club</a>
-
-            <?php
-    // Récupérez les courts du club de l'utilisateur pour donner la possibilité de manager les terrains et membres
-    $req_courts = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
-    FROM courts c 
-    INNER JOIN club cl ON c.id_club = cl.id_club 
-    WHERE c.id_club = ?");
-    $req_courts->execute([$_SESSION['id_user']]);
-    $courts = $req_courts->fetchAll(PDO::FETCH_ASSOC); 
-
-    if ($courts) { ?>
-        <a href="gestion_courts.php">Gestion des courts</a><br/>
-        <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
-        <a href="statistique.php">Statistiques du club</a><br/>
-
-    <?php } ?>
-        <!-- si non-connecté on affiche la possibilité de se connecter -->
-        <?php else : ?>
-            <a href="connexion.php" >Connexion</a>
-        <?php endif; ?>
-    </h3>
-</div>
+            </form></body><br>
+            <!-- affichage des bouttons pour les différentes vues -->
+    <h3>Calendrier de la journée</h3>
+    <div class="menu_calendar">
+        <button class="button" id="daily-btn">Vue quotidienne</button>
+        <button class="button" id="weekly-btn">Vue hebdomadaire</button>
+        <button class="button" id="monthly-btn">Vue mensuelle</button>
+    </div>
 
 
-<!-- liste récupérant tous les noms de club, en faire une liste et récupérer quel agenda de club afficher -->
-<form id="clubForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-        <?php
-        require 'db_connect.php';
-        $sqlUpdateEvent = "SELECT * FROM club";
-        $stmt = $conn->prepare($sqlUpdateEvent);
-        $stmt->execute();
-        $clubs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        echo '<select id="liste_club" name="liste_club">';
-        foreach ($clubs as $club) {
-            echo '<option value="' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '</option>';
-        }
-        echo '</select>';
-        
-        echo '<button type="submit">Envoyer</button>';
-
-        
-        ?>
-        </form></body><br>
-        <!-- affichage des bouttons pour les différentes vues -->
-<h3>Calendrier de la journée</h3>
-<div class="menu_calendar">
-    <button class="button" id="daily-btn">Vue quotidienne</button>
-    <button class="button" id="weekly-btn">Vue hebdomadaire</button>
-    <button class="button" id="monthly-btn">Vue mensuelle</button>
-</div>
-
-
-<div id="calendar"></div>
+    <div id="calendar"></div>
 </body>
 </html>
