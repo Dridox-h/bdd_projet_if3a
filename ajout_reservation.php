@@ -62,6 +62,22 @@ foreach ($clubs as $club) {
 }
 echo '</select>';
 
+        // Vérifier le nombre de réservations de l'utilisateur
+        $sql_count_reservations = "SELECT COUNT(*) AS count FROM inscrits WHERE id_user = ? AND inscrits.role = 'leader'";
+        $stmt_count_reservations = $conn->prepare($sql_count_reservations);
+        $stmt_count_reservations->execute([$userId]);
+        $row_count_reservations = $stmt_count_reservations->fetch(PDO::FETCH_ASSOC);
+        $num_reservations = $row_count_reservations['count'];
+
+        echo $num_reservations;
+
+        if ($num_reservations >= 1) {
+            echo "Nombre maximal de réservations atteint ! Maximum : 1 par personne<br>";
+            echo '<a href="index.php">menu</a>';
+        }
+
+
+
 ?>
     <input type="submit" value="Envoyer"><br>
     <a href="index.php">CLiquer ici pour retourner à l'agenda</a>

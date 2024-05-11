@@ -49,11 +49,22 @@ $result = $stmt->execute([$date_debut,$date_fin,$id_court]);
 // Vérifier si l'insertion a réussi
 if ($result) {
     echo "Réservation effectuée avec succès !";
+    $sql = "SELECT id_reservation FROM reservation WHERE start_datetime = ? AND end_datetime = ? AND id_court = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$date_debut, $date_fin, $id_court]);
+    $id_reservation_row = $stmt->fetch(); // Utilisez fetch() pour obtenir une seule ligne
+    if ($id_reservation_row) {
+        $id_reservation = $id_reservation_row['id_reservation'];
+        // Utilisez $id_reservation comme nécessaire dans votre application
+        echo "ID de réservation: " . $id_reservation;
+        $_SESSION['id_reservation'] = $id_reservation;
 
+    } else {
+        echo "Aucune réservation trouvée avec ces détails.";
+    }
 } else {
     echo "Échec de l'ajout de la réservation.";
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -66,16 +77,17 @@ if ($result) {
 </head>
 <body>
     <h1>Veuillez indiquer vos partenaires de jeux 3 maximun ! </h1>
-    <form action="">
+    <h2>Choississez invité si vous voulez jouer avec un invite</h2>
+    <form action="ajout_inscrit_code.php"  method="post">
     <?php $sql = "SELECT * FROM utilisateur";
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $stmt->execute();   
     $joueurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Créer le menu déroulant des terrains
 
     echo '<select id="joueur1" name="joueur1">';
-    echo '<option value="">Sélectionner un joueur</option>'; // Option null
+    echo '<option value=""></option>'; // Option null
     foreach ($joueurs as $joueur) {
         // Utiliser l'id du court et l'emplacement pour l'option
         echo '<option value="' . htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') . '">' .
@@ -85,7 +97,7 @@ if ($result) {
     echo '</select>';
     
     echo '<select id="joueur2" name="joueur2">';
-    echo '<option value="">Sélectionner un joueur</option>'; // Option null
+    echo '<option value=""></option>'; // Option null
     foreach ($joueurs as $joueur) {
         // Utiliser l'id du court et l'emplacement pour l'option
         echo '<option value="' . htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') . '">' .
@@ -95,7 +107,7 @@ if ($result) {
     echo '</select>';
     
     echo '<select id="joueur3" name="joueur3">';
-    echo '<option value="">Sélectionner un joueur</option>'; // Option null
+    echo '<option value=""></option>'; // Option null
     foreach ($joueurs as $joueur) {
         // Utiliser l'id du court et l'emplacement pour l'option
         echo '<option value="' . htmlspecialchars($joueur['nom'], ENT_QUOTES, 'UTF-8') . '">' .
