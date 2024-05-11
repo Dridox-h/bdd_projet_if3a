@@ -114,9 +114,9 @@ if (!empty($_POST['liste_club'])) {
             <br/>
             <a href="update_password.php">Modifier le mot de passe</a>
             <br/>
-            <a href="ajout_reservation.php">Prendre une réservation</a><br/>
+            <a href="ajout_reservation.php">Prendre/annuler une réservation</a><br/>
 
-            <a href="ajouter_club.php">Ajouter un club</a>
+            <a href="ajouter_club.php">Ajouter/supprimer un club</a>
 
             <?php
     // Récupérez les courts du club de l'utilisateur pour donner la possibilité de manager les terrains et membres
