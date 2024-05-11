@@ -54,6 +54,9 @@ if (isset($_SESSION['id_user'])) {
     <link rel="stylesheet" href="./stylesheet/styles.css">
 </head>
 <body>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
     <h1>Modifiez votre mot de passe, <?= isset($prenom) ? $prenom : '' ?> <?= isset($nom) ? $nom : '' ?></h1>
     <?php if (!empty($message)): ?>
         <p style="color:red"><?= $message ?></p>
