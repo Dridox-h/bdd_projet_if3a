@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un club</title>
+    <link href="stylesheet/styles.css" rel="stylesheet">
 </head>
 <body>
     <div id ="MenuBarre">

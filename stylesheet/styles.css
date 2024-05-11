@@ -158,3 +158,11 @@ h3 {
     padding:20px;
     border-bottom: 5px solid #b84315;
 }
+
+#Admin{
+    position: fixed;
+    top: 0;
+    background-color: #711200;
+    padding:20px;
+    border-bottom: 5px solid #550f00;
+}

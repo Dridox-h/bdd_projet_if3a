@@ -20,7 +20,7 @@ if (isset($_POST['supp_reservation'])) {
 <head>
     <meta charset="utf-8">
     <title>Event Calendar</title>
-    <link href="stylesheet/style.css" rel="stylesheet" type="text/css">
+    <link href="stylesheet/styles.css" rel="stylesheet" type="text/css">
     <link href="stylesheet/calendar.css" rel="stylesheet" type="text/css">
 
     <style>
@@ -41,6 +41,9 @@ if (isset($_POST['supp_reservation'])) {
     </style>
 </head>
 <body>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
     <h1>Bienvenue sur l'agenda des clubs ! </h1></br>
 
 
@@ -138,6 +141,5 @@ if (isset($_POST['supp_reservation'])) {
             </th>
         </tbody>
     </table>
-    <a href="index.php">CLiquer ici pour retourner à l'agenda</a>
 </body>
 </html>
