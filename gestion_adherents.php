@@ -21,8 +21,6 @@ if ($club_utilisateur) {
                           WHERE c.id_club = ?");
     $req_adherent->execute([$club_utilisateur['id_club']]);
     $adherents = $req_adherent->fetchAll(PDO::FETCH_ASSOC); 
-} else {
-    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
 }
 if (isset($_POST['id_adherent'])) {
     $id_adherent = $_POST['id_adherent'];
@@ -43,6 +41,7 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Liste des adherents de votre club</title>
+    <link href="stylesheet/styles.css" rel="stylesheet">
     <style>
         table {
             border-collapse: collapse;
@@ -62,9 +61,10 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
     <div id ="MenuBarre">
         <a href="index.php">Page d'accueil</a>
     </div>
-<h1>Tableau des adherents de votre club</h1>
+
 
 <?php if ($club_utilisateur) { ?>
+    <h1>Tableau des adherents de votre club</h1>
     <table>
     <thead>
         <tr>
@@ -93,11 +93,10 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
     <?php } ?>
     </tbody>
     </table>
-<?php } ?>
-
-
-<a href="ajout_adherent.php">Ajouter des adhérents</a>
-
-
+    <a href="ajout_adherent.php">Ajouter des adhérents</a>
+<?php }
+else {
+    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
+}?>
 </body>
 </html>

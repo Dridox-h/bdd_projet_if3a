@@ -35,8 +35,6 @@ if ($club_utilisateur) {
             echo "<p>Veuillez sélectionner au moins un adhérent.</p>";
         }
     }
-}else {
-    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
 }
 ?>
 
@@ -45,11 +43,13 @@ if ($club_utilisateur) {
 <head>
     <meta charset="UTF-8">
     <title>Ajout d'adhérents</title>
+    <link href="stylesheet/styles.css" rel="stylesheet">
 </head>
 <body>
 <div id ="MenuBarre">
     <a href="index.php">Page d'accueil</a>
 </div>
+<?if ($club_utilisateur){?>
     <h1>Ajouter des adhérents</h1>
     <form method="post">
         <label for="adherents">Sélectionnez les adhérents à ajouter :</label><br>
@@ -61,6 +61,9 @@ if ($club_utilisateur) {
         <input type="submit" value="Confirmer l'ajout">
     </form>
     <a href="gestion_adherents.php">Retour à la liste des adhérents</a>
+<?} else {
+    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
+}?>
 
 </body>
 </html>
