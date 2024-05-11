@@ -59,6 +59,9 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
 <h1>Tableau des adherents de votre club</h1>
 
 <?php if ($club_utilisateur) { ?>

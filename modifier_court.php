@@ -54,7 +54,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Modifier le court</title>
 </head>
 <body>
-
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
 <h2>Modifier le court</h2>
 
 <form method="post">

@@ -47,6 +47,9 @@ if ($club_utilisateur) {
     <title>Ajout d'adhérents</title>
 </head>
 <body>
+<div id ="MenuBarre">
+    <a href="index.php">Page d'accueil</a>
+</div>
     <h1>Ajouter des adhérents</h1>
     <form method="post">
         <label for="adherents">Sélectionnez les adhérents à ajouter :</label><br>
