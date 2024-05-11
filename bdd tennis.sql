@@ -27,16 +27,6 @@ CREATE TABLE `courts` (
   `id_club` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `events` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `start_date` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `end_date` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `created` datetime NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=Active, 0=Block'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 CREATE TABLE `inscrits` (
   `id_user` int(11) NOT NULL,
   `id_reservation` int(11) NOT NULL,
@@ -45,9 +35,8 @@ CREATE TABLE `inscrits` (
 
 CREATE TABLE `reservation` (
   `id_reservation` int(11) NOT NULL,
-  `date_reservation` date DEFAULT NULL,
-  `heure_debut` time DEFAULT NULL,
-  `duree` time DEFAULT NULL,
+  `start_datetime` datetime DEFAULT NULL,
+  `end_datetime` datetime DEFAULT NULL,
   `id_court` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
