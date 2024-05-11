@@ -104,14 +104,15 @@ if (empty($j_3) &&(!empty($j_2) || !empty($j_1))) {
             $result = $stmt->execute([$id_user_j3,$id_reservation,'joueur']);
 
             
-            $sql = "INSERT INTO inscrits (id_user,id_reservation,role) VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-        
-            $result = $stmt->execute([$userId,$id_reservation,'leader']);
+
             echo "réservation effectué";
             echo "<a href='index.php'> revenir au menu <a>";
         }
     }
 }
+$sql = "INSERT INTO inscrits (id_user,id_reservation,role) VALUES (?, ?, ?)";
+$stmt = $conn->prepare($sql);
+
+$result = $stmt->execute([$userId,$id_reservation,'leader']);
 
 ?>

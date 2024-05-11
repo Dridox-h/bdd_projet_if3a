@@ -23,7 +23,7 @@ $date_fin = htmlspecialchars($_POST['end_date'], ENT_QUOTES, 'UTF-8');
 $nomClub = htmlspecialchars($_POST['nom_club'], ENT_QUOTES, 'UTF-8');
 $terrain = htmlspecialchars($_POST['terrain'], ENT_QUOTES, 'UTF-8');
 
-echo $date_debut,$date_fin,$nomClub,$terrain;
+//echo $date_debut,$date_fin,$nomClub,$terrain;
 // Valider les données d'entrée
 if (empty($date_debut) || empty($date_fin) || empty($nomClub)|| empty($terrain)) {
     echo "Tous les champs sont requis.";
@@ -36,7 +36,6 @@ $stmt = $conn->prepare($sql);
 $stmt->execute([$terrain]);
 $id_court = $stmt->fetchColumn();
 
-echo $id_court;
 
 $sql = "INSERT INTO reservation (start_datetime, end_datetime, id_court) VALUES (?, ?, ?)";
 $stmt = $conn->prepare($sql);

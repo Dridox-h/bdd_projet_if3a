@@ -116,6 +116,8 @@ if (!empty($_POST['liste_club'])) {
             <br/>
             <a href="ajout_reservation.php">Prendre une réservation</a><br/>
 
+            <a href="ajouter_club.php">Ajouter un club</a>
+
             <?php
     // Récupérez les courts du club de l'utilisateur pour donner la possibilité de manager les terrains et membres
     $req_courts = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 

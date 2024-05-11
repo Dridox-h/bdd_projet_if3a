@@ -95,15 +95,18 @@ if (isset($_POST['supp_reservation'])) {
         $row_count_reservations = $stmt_count_reservations->fetch(PDO::FETCH_ASSOC);
         $num_reservations = $row_count_reservations['count'];
 
-        echo $num_reservations;
+        //echo $num_reservations;
 
         if ($num_reservations >= 1) {
             echo "Nombre maximal de réservations atteint ! Maximum : 1 par personne<br>";
-            echo '<a href="index.php">menu</a>';
+            echo '<h1><a href="index.php">menu</a></h1>';
         }
         ?>
 
-    <input type="submit" value="Envoyer"><br>
+        <?php if ($num_reservations != 1){
+            echo "<input type='submit' value='Envoyer'><br>";
+        }
+        ?>
         </form>
     <h2>Supprimer une réservation</h2>
 
