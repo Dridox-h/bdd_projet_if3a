@@ -17,8 +17,8 @@ if ($club_utilisateur) {
                           INNER JOIN club cl ON c.id_club = cl.id_club 
                           WHERE c.id_club = ?");
     $req_courts->execute([$club_utilisateur['id_club']]);
-    $courts = $req_courts->fetchAll(PDO::FETCH_ASSOC); 
-    
+    $courts = $req_courts->fetchAll(PDO::FETCH_ASSOC);
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $emplacement = $_POST['emplacement'];
         $type_surface = $_POST['type_surface'];
@@ -30,8 +30,6 @@ if ($club_utilisateur) {
         header("Location: gestion_courts.php");
         exit();
     }
-else {
-    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
 }
 ?>
 
@@ -40,29 +38,28 @@ else {
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un court</title>
+    <link href="stylesheet/styles.css" rel="stylesheet">
 </head>
 <body>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
+    <?if ($club_utilisateur) {?>
+    <h2>Ajouter un court à votre club </h2>
 
-<h2>Ajouter un court à votre club </h2>
+    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <label for="emplacement">Emplacement:</label><br>
+        <input type="text" id="emplacement" name="emplacement" required><br><br>
 
-<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-    <label for="emplacement">Emplacement:</label><br>
-    <input type="text" id="emplacement" name="emplacement" required><br><br>
+        <label for="type_surface">Type de surface:</label><br>
+        <input type="text" id="type_surface" name="type_surface" required><br><br>
 
-    <label for="type_surface">Type de surface:</label><br>
-    <input type="text" id="type_surface" name="type_surface" required><br><br>
-
-    <input type="submit" value="Ajouter">
-</form>
-
+        <input type="submit" value="Ajouter">
+    </form>
+    <?php
+    } else {
+        echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
+    }
+    ?>
 </body>
 </html>
-
-<?php
-} else {
-    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
-}
-?>
-
-
-
