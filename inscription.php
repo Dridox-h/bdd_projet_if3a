@@ -41,23 +41,22 @@ if (isset($_POST['submit'])) {
         if (isset($_POST['liste_club'])) {
             $clubs = $_POST['liste_club'];
             if (is_array($clubs)){
-            foreach ($clubs as $club) {
-                $req = $bdd->prepare("SELECT id_club FROM club WHERE nom_club = ?");
-                $req->execute([$club]);
-                $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
-                $req = $bdd->prepare("INSERT INTO appartenance_club(id_user, id_club) VALUES (?,?)");
-                $req->execute([$id_user, $id_club]);
-                $_SESSION['id_user'] = $id_user;
-            }
-        }else{
+                foreach ($clubs as $club) {
+                    $req = $bdd->prepare("SELECT id_club FROM club WHERE nom_club = ?");
+                    $req->execute([$club]);
+                    $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
+                    $req = $bdd->prepare("INSERT INTO appartenance_club(id_user, id_club) VALUES (?,?)");
+                    $req->execute([$id_user, $id_club]);
+                }
+            }else{
                 $req = $bdd->prepare("SELECT id_club FROM club WHERE nom_club = ?");
                 $req->execute([$clubs]);
                 $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
                 $req = $bdd->prepare("INSERT INTO appartenance_club(id_user, id_club) VALUES (?,?)");
                 $req->execute([$id_user, $id_club]);
-                $_SESSION['id_user'] = $id_user;
             }
         }
+        $_SESSION['id_user'] = $id_user;
         header("Location: index.php");
         exit();
     }
