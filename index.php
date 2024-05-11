@@ -28,6 +28,9 @@ if (!empty($_POST['liste_club'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendrier de la journée</title>
+
+    <link href="stylesheet/styles.css" rel="stylesheet"/>
+
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css' rel='stylesheet' media='print' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
@@ -92,23 +95,32 @@ if (!empty($_POST['liste_club'])) {
     </script>
 </head>
 <body>
+
 <div id=MenuBarre>
-<h3>
-<?php 
-if (isset($_SESSION['id_user'])) :
-    echo $_SESSION['id_user']; ?>
-    Connecté en tant que :
+    <h3>
+        <?php if (isset($_SESSION['id_user'])) :?>
+            Connecté en tant que :
+            <?php
+            $req = $pdo->prepare("SELECT nom,prenom FROM utilisateur WHERE id_user = ?");
+            $req->execute([$_SESSION['id_user']]);
+            $donnees = $req->fetch();
+            echo $donnees['nom'], " ", $donnees['prenom'];
+            ?>
+            <br/>
+            <a href="deconnexion.php">Déconnexion</a>
+            <br/>
+            <a href="update_password.php">Modifier le mot de passe</a>
+            <br/>
+            <a href="ajout_reservation.php">Prendre une réservation</a>
+        <?php else : ?>
+            <a href="connexion.php" >Connexion</a>
+        <?php endif; ?>
+    </h3>
+</div>
+
     <?php
-    $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
-
-    $req = $bdd->prepare("SELECT nom, prenom FROM utilisateur WHERE id_user = ?");
-    $req->execute([$_SESSION['id_user']]);
-    $donnees = $req->fetch();
-    echo $donnees['nom'] . " " . $donnees['prenom'];
-
     // Récupérez les courts du club de l'utilisateur
-    $req_courts = $bdd->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+    $req_courts = $pdo->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
     FROM courts c 
     INNER JOIN club cl ON c.id_club = cl.id_club 
     WHERE c.id_club = ?");
@@ -121,20 +133,6 @@ if (isset($_SESSION['id_user'])) :
 
     <?php } ?>
 
-    <br/>
-    <a href="deconnexion.php">Déconnexion</a>
-    <a href="update_password.php">Modifier le mot de passe</a>
-    <a href="ajout_reservation.php">Prendre une réservation</a>
-
-<?php else : ?>
-    <a href="connexion.php">Connexion</a>
-<?php endif; ?>
-</h3>
-</div>
-<div class="header-menu">
-    <div>
-    </div>
-</div>
 
 <form id="clubForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
         <?php
