@@ -63,40 +63,42 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
 
-<?php if ($club_utilisateur) { ?>
-    <h1>Tableau des adherents de votre club</h1>
-    <table>
-    <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Role</th>
-            <th>Expulsion</th>
-
-
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($adherents as $adherent) { ?>
+    <?php if ($club_utilisateur) { ?>
+        <h1>Tableau des adherents de votre club</h1>
+        <table>
+        <thead>
             <tr>
-                <td><?php echo $adherent['nom']; ?></td>
-                <td><?php echo $adherent['prenom']; ?></td>
-                <td><?php echo $adherent['role']; ?></td>
-                <td>
-                    <form method="POST" style="display:inline;">
-                        <input type="hidden" name="id_adherent" value="<?php echo $adherent['id_user']; ?>">
-                        <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir expulser cette adherent ?')">Expulser</button>
-                    </form>
-                </td>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Role</th>
+                <th>Expulsion</th>
+
 
             </tr>
-    <?php } ?>
-    </tbody>
-    </table>
-    <a href="ajout_adherent.php">Ajouter des adhérents</a>
-<?php }
-else {
-    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
-}?>
+        </thead>
+        <tbody>
+        <?php foreach ($adherents as $adherent) { ?>
+                <tr>
+                    <td><?php echo $adherent['nom']; ?></td>
+                    <td><?php echo $adherent['prenom']; ?></td>
+                    <td><?php echo $adherent['role']; ?></td>
+                    <td>
+                        <?php if ($id_user != $adherent["id_user"]){?>
+                            <form method="POST" style="display:inline;">
+                                <input type="hidden" name="id_adherent" value="<?php echo $adherent['id_user']; ?>">
+                                <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir expulser cette adherent ?')">Expulser</button>
+                            </form>
+                        <?php }?>
+                    </td>
+
+                </tr>
+        <?php } ?>
+        </tbody>
+        </table>
+        <a href="ajout_adherent.php">Ajouter des adhérents</a>
+    <?php }
+    else {
+        echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
+    }?>
 </body>
 </html>
