@@ -41,6 +41,9 @@ if (isset($_POST['submit'])) {
 
 </head>
 <body>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
     <h1>Connexion</h1>
     <?php if (!empty($message)): ?>
         <p style="color:red"><?= $message ?></p>

@@ -82,6 +82,9 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body>
+    <div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+    </div>
     <section class="section-container">
         <h1>Inscription</h1>
         <form class="form-container" action="inscription.php" method="post">
