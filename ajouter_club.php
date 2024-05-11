@@ -117,8 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                     ?>
         </select><br><br>
-
-        <input type="submit" value="Supprimer le club">
+        <input type="hidden" name="id_adherent" value="Supprimer le club">
+        <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce club ?')">Supprimer le club</button>
     </form>
 </body>
 </html>
