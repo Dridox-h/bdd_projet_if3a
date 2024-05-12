@@ -121,17 +121,22 @@ if (isset($_POST['supp_reservation'])) {
         <tbody>
             <th>
                 <?php 
-                $sql = "SELECT * FROM inscrits INNER JOIN utilisateur ut ON ut.id_user=inscrits.id_user INNER JOIN reservation r ON r.id_reservation = inscrits.id_reservation WHERE ut.id_user = ? AND inscrits.role = 'leader'";
+                $sql = "SELECT * FROM inscrits INNER JOIN utilisateur ut ON ut.id_user=inscrits.id_user INNER JOIN reservation r ON r.id_reservation = inscrits.id_reservation WHERE ut.id_user = ? ";//AND inscrits.role = 'leader'
                 $stmt3 = $conn->prepare($sql);
                 $stmt3->execute([$userId]);
                 $reservation = $stmt3->fetch(PDO::FETCH_ASSOC);
 
                 if (!empty($reservation)){
                     //print_r($reservation);
-                    echo "voici votre reservation en tant que leader :  <br>"; 
+                    echo "voici votre reservation en tant que ".$reservation["role"]."  <br>"; 
                     echo ($reservation["role"]." qui commence le ".$reservation["start_datetime"]." et finit le ". $reservation["end_datetime"]);
+                    $_SESSION['id_reservation'] = $reservation["id_reservation"];
+                    $_SESSION['role'] = $reservation["role"];
+                    $_SESSION['id_user'] = $reservation["id_user"];
+
                 }
                 ?>
+                
             </th>
             <th>
                 <form action="suppression.php" method="POST" style="display:inline;">

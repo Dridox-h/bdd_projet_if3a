@@ -6,7 +6,7 @@ require 'db_connect.php'; // connexion à la BDD
 
 $today = date('Y-m-d'); // on récuppère la date d'ajourd'hui
 
-// récupération du club séléctionnée puis formatage des données en json pour ke traiter
+// récupération du club séléctionnée puis formatage des données en json pour les traiter
 if (!empty($_POST['liste_club'])) { 
     $query = "SELECT * FROM reservation INNER JOIN courts c ON c.id_court=reservation.id_court 
     INNER JOIN club cl ON cl.id_club=c.id_club WHERE cl.nom_club = ?";
