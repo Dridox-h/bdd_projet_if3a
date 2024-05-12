@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div id="MenuBarre">
         <a href="index.php">Page d'accueil</a>
     </div>
-    <h1>Ajouter un club</h1>
+    <h1>Ajouter un club</h1><!-- form qui va recuillir les données à ajouter pour la création d'un club -->
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="nom_club">Nom du club :</label><br>
         <input type="text" id="nom_club" name="nom_club" required><br><br>
@@ -100,13 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <h1>Supprimer un club</h1>
+    <!-- form pour supprimer un club -->
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="delete_club">Sélectionnez le club à supprimer :</label><br>
         <select id="delete_club" name="delete_club">
             <?php
+            // on récupère les clubs de l'utilisateur où l'utilisateur est admin
                 $sql_clubs_utilisateur = "SELECT club.id_club, club.nom_club FROM club
                 INNER JOIN appartenance_club ON club.id_club = appartenance_club.id_club
-                WHERE appartenance_club.id_user = ?";
+                WHERE appartenance_club.id_user = ? AND appartenance_club.role_adherent = 'admin'";
                 $stmt_clubs_utilisateur = $conn->prepare($sql_clubs_utilisateur);
                 $stmt_clubs_utilisateur->execute([$id_user]);
                 $clubs_utilisateur = $stmt_clubs_utilisateur->fetchAll(PDO::FETCH_ASSOC);
@@ -117,6 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                     ?>
         </select><br><br>
+        <!--On demande la revérification par l'utilisateur de vouloir supprimer-->
         <input type="hidden" name="id_adherent" value="Supprimer le club">
         <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce club ?')">Supprimer le club</button>
     </form>

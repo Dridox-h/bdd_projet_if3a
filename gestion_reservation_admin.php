@@ -1,12 +1,10 @@
 <?php
-try {
-    $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-} catch (PDOException $e) {
-    die('Erreur de connexion : ' . $e->getMessage());
-}
+include 'db_connect';
 session_start(); 
+
+// préparation de la requête pour savoir si un user est un admin
 $id_user = $_SESSION['id_user'];
-$req_club = $bdd->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
+$req_club = $conn->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
 $req_club->execute([$id_user]);
 $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 
@@ -14,7 +12,7 @@ $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 if ($club_utilisateur) {
 
     // Récupérez les adherents du club de l'utilisateur
-    $req_reservation = $bdd->prepare("SELECT c.emplacement AS emplacement , r.date_reservation AS date , r.duree AS duree , r.heure_debut AS heure, u.nom AS nom, u.prenom AS prenom
+    $req_reservation = $conn->prepare("SELECT c.emplacement AS emplacement , r.date_reservation AS date , r.duree AS duree , r.heure_debut AS heure, u.nom AS nom, u.prenom AS prenom
                                     FROM reservation r 
                                     INNER JOIN inscrits i ON r.id_reservation = i.id_reservation
                                     INNER JOIN courts c ON c.id_court = r.id_court
@@ -29,11 +27,11 @@ if ($club_utilisateur) {
 
 if (isset($_POST['id_reservation'])) {
     $id_reservation = $_POST['id_reservation'];
-    $req = $bdd->prepare("DELETE FROM reservation WHERE id_reservation = ?");
+    $req = $conn->prepare("DELETE FROM reservation WHERE id_reservation = ?");
     $req->execute([$id_reservation]);
 }
 
-$req = $bdd->prepare("SELECT c.emplacement AS emplacement , r.date_reservation AS date , r.duree AS duree , r.heure_debut AS heure, u.nom AS nom, u.prenom AS prenom
+$req = $conn->prepare("SELECT c.emplacement AS emplacement , r.date_reservation AS date , r.duree AS duree , r.heure_debut AS heure, u.nom AS nom, u.prenom AS prenom
                       FROM reservation r 
                       INNER JOIN inscrits i ON r.id_reservation = i.id_reservation
                       INNER JOIN courts c ON c.id_court = r.id_court

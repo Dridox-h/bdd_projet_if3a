@@ -136,8 +136,9 @@ if (!empty($reservations)) {
                 
             </th>
             <th>    
+                <!-- form pour affiche un bouton suppression qui demande la confirmation lors de la suppression-->
                 <form action="suppression.php" method="POST" style="display:inline;">
-                    <input type="hidden" name="supp_reservation" value="<?php echo $reservation['id_reservation']; ?>">
+                    <input type="hidden" name="supp_reservation" value="<?php echo $reservation['id_reservation']; // variable caché qui porte l'id de la réservation à supprimer.?>">
                     <button type="submit" name="submit_delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')">Supprimer</button>
                 </form>
             </th>

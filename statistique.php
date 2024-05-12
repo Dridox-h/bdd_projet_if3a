@@ -93,7 +93,7 @@ $clubs = $stmt_clubs->fetchAll(PDO::FETCH_ASSOC);
                     <th>Heures réservées</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody><!-- on affiche les différentes heures par adhérent -->
             <?php foreach ($heures_par_adherent as $row): ?>
             <tr>
                 <td><?php echo $row['nom']; ?></td>
@@ -111,7 +111,7 @@ $clubs = $stmt_clubs->fetchAll(PDO::FETCH_ASSOC);
                     <th>Taux de réservation moyen (heures)</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody> <!-- on affiche les différents taux de réservation-->
                 <?php foreach ($taux_reservation_court as $row): ?>
                     <tr>
                         <td><?php echo $row['emplacement']; ?></td>

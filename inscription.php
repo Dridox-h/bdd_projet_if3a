@@ -1,6 +1,8 @@
 <?php
 session_start();
 include 'db_connect.php';
+
+//fonction permettant de savoir si l'émail est présent dans la base de données
 function email_present($email, $bdd) {
     $query = $bdd->prepare("SELECT email FROM utilisateur WHERE email = :email");
 
@@ -24,7 +26,7 @@ try {
     die('Erreur de connexion : ' . $e->getMessage());
 }
 
-
+// on récupère les données du formulaire 
 if (isset($_POST['submit'])) {
     $nom = $_POST['nom'];
     $prenom = $_POST['prenom'];
@@ -32,16 +34,17 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
     if(email_present($email,$bdd)==0){
         echo "email déjà présent";
-    }else {
+    }else { // on ajoute l'utilisateur dans la base
         $req = $bdd->prepare("INSERT INTO utilisateur(nom, prenom, email, password) VALUES (?,?,?,?);");
         $req->execute([$nom, $prenom,$email,$password]);
         $req=$bdd->prepare("SELECT id_user FROM utilisateur WHERE email = ?");
         $req->execute([$email]);
         $id_user = $req->fetch()["id_user"];
+
         if (isset($_POST['liste_club'])) {
             $clubs = $_POST['liste_club'];
             if (is_array($clubs)){
-                foreach ($clubs as $club) {
+                foreach ($clubs as $club) { // on ajoute l'appartenance de l'utilisateur dans la table appartenance_club
                     $req = $bdd->prepare("SELECT id_club FROM club WHERE nom_club = ?");
                     $req->execute([$club]);
                     $id_club = $req->fetch(PDO::FETCH_ASSOC)['id_club'];
@@ -56,6 +59,7 @@ if (isset($_POST['submit'])) {
                 $req->execute([$id_user, $id_club]);
             }
         }
+        // on stocke l'id de l'utilisateur dans la session
         $_SESSION['id_user'] = $id_user;
         header("Location: index.php");
         exit();
@@ -65,7 +69,6 @@ if (isset($_POST['submit'])) {
 
 
 
-//var_dump($_POST);
 
 
 ?>
@@ -86,6 +89,7 @@ if (isset($_POST['submit'])) {
     </div>
     <section class="section-container">
         <h1>Inscription</h1>
+        <!-- on fait une formulaire pour récupèrer les données de l'inscription-->
         <form class="form-container" action="inscription.php" method="post">
             <label for="nom">Nom</label>
             <input type="text" name="nom" id="nom" required>
@@ -102,7 +106,7 @@ if (isset($_POST['submit'])) {
             $stmt = $conn->prepare("SELECT * FROM club");
             $stmt->execute();
             $clubs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+            // création du menu déroulant
             echo '<select multiple id="liste_club" name="liste_club">';
             foreach ($clubs as $club) {
                 echo '<option value="' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($club["nom_club"], ENT_QUOTES, 'UTF-8') . '</option>';

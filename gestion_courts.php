@@ -1,12 +1,10 @@
 <?php
-try {
-    $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-} catch (PDOException $e) {
-    die('Erreur de connexion : ' . $e->getMessage());
-}
+include 'db_connect.php';
 session_start(); 
+
+// récupère les id des clubs où l'utilisateur est admin 
 $id_user = $_SESSION['id_user'];
-$req_club = $bdd->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
+$req_club = $conn->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
 $req_club->execute([$id_user]);
 $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 
@@ -14,7 +12,7 @@ $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 if ($club_utilisateur) {
 
     // Récupérez les courts du club de l'utilisateur
-    $req_courts = $bdd->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+    $req_courts = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
                           FROM courts c 
                           INNER JOIN club cl ON c.id_club = cl.id_club 
                           WHERE c.id_club = ?");
@@ -24,14 +22,14 @@ if ($club_utilisateur) {
     echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
 }
 
-
+// on supprime le courts si le bouton est pressé 
 if (isset($_POST['id_court'])) {
     $id_court = $_POST['id_court'];
-    $req = $bdd->prepare("DELETE FROM courts WHERE id_court = ?");
+    $req = $conn->prepare("DELETE FROM courts WHERE id_court = ?");
     $req->execute([$id_court]);
 }
 
-$req = $bdd->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+$req = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
                       FROM courts c 
                       INNER JOIN club cl ON c.id_club = cl.id_club"); 
 $req->execute();
@@ -44,6 +42,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
 
     <meta charset="UTF-8">
     <title>Tableau des courts</title>
+    <!-- ajout du style ponctuel -->
     <link href="stylesheet/styles.css" rel="stylesheet">
     <style>
         table {
@@ -61,7 +60,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
-    <div id ="MenuBarre">
+    <div id ="MenuBarre"><!-- barre de navigation-->
         <a href="index.php">Page d'accueil</a>
     </div>
 
@@ -79,6 +78,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
             </tr>
         </thead>
         <tbody>
+            <!-- on affiche tous les courts disponibles-->
         <?php foreach ($courts as $court) { ?>
                 <tr>
                     <td><?php echo $court['emplacement']; ?></td>
@@ -88,6 +88,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
                     <td>
                         <a href="modifier_court.php?id=<?php echo $court['id_court']; ?>">Modifier</a>
                         <form method="POST" style="display:inline;">
+                        <!-- confirmation de la suppression et envoie des données sur la même page-->
                             <input type="hidden" name="id_court" value="<?php echo $court['id_court']; ?>">
                             <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce court ?')">Supprimer</button>
                         </form>

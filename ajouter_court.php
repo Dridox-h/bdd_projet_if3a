@@ -1,18 +1,14 @@
 <?php
-try {
-    $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-} catch (PDOException $e) {
-    die('Erreur de connexion : ' . $e->getMessage());
-}
+include "db_connect.php";
 session_start(); 
 $id_user = $_SESSION['id_user'];
-$req_club = $bdd->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
+$req_club = $conn->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
 $req_club->execute([$id_user]);
 $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 
 // Vérifiez si l'utilisateur est administrateur d'un club
 if ($club_utilisateur) {
-    $req_courts = $bdd->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+    $req_courts = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
                           FROM courts c 
                           INNER JOIN club cl ON c.id_club = cl.id_club 
                           WHERE c.id_club = ?");
@@ -24,7 +20,7 @@ if ($club_utilisateur) {
         $type_surface = $_POST['type_surface'];
         $id_club = $club_utilisateur['id_club'];
 
-        $req = $bdd->prepare("INSERT INTO courts (emplacement, id_club, type_surface) VALUES (?, ?, ?)");
+        $req = $conn->prepare("INSERT INTO courts (emplacement, id_club, type_surface) VALUES (?, ?, ?)");
         $req->execute([$emplacement, $id_club, $type_surface]);
 
         header("Location: gestion_courts.php");

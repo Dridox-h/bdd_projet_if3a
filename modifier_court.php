@@ -3,7 +3,7 @@
 if (isset($_GET['id'])) {
     $court_id = $_GET['id'];
 
-    try {
+    try { // connexion à la bdd
         $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
         $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
     } catch (PDOException $e) {
@@ -25,12 +25,12 @@ if (isset($_GET['id'])) {
     header('Location: gestion_courts.php');
     exit;
 }
-
+// on récupère les données envoyées
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $emplacement = $_POST['emplacement'];
     $type_surface = $_POST['type_surface'];
 
-    try {
+    try { // on update les courts en fonction des données
         $update_req = $bdd->prepare("UPDATE courts 
                                     SET emplacement = :emplacement, type_surface = :type_surface 
                                     WHERE id_court = :court_id");
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 <h2>Modifier le court</h2>
 
-<form method="post">
+<form method="post"> <!--on fait un formulaire pour récupèrer les données -->
     <label for="emplacement">Emplacement:</label><br>
     <input type="text" id="emplacement" name="emplacement" value="<?php echo $court['emplacement']; ?>"><br>
     <label for="type_surface">Type de surface:</label><br>

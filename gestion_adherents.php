@@ -1,12 +1,8 @@
 <?php
-try {
-    $bdd = new PDO("mysql:host=localhost;dbname=tennis;charset=utf8", "root", "");
-} catch (PDOException $e) {
-    die('Erreur de connexion : ' . $e->getMessage());
-}
+include 'db_connect.php';
 session_start(); 
 $id_user = $_SESSION['id_user'];
-$req_club = $bdd->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
+$req_club = $conn->prepare("SELECT id_club FROM appartenance_club WHERE id_user = ? AND role_adherent = 'admin'");
 $req_club->execute([$id_user]);
 $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 
@@ -14,20 +10,20 @@ $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 if ($club_utilisateur) {
 
     // Récupérez les adherents du club de l'utilisateur
-    $req_adherent = $bdd->prepare("SELECT ac.id_user AS id_user, u.nom AS nom, u.prenom AS prenom, c.id_club AS id_club, c.nom_club AS nom_club, ac.role_adherent AS role 
+    $req_adherent = $conn->prepare("SELECT ac.id_user AS id_user, u.nom AS nom, u.prenom AS prenom, c.id_club AS id_club, c.nom_club AS nom_club, ac.role_adherent AS role 
                           FROM appartenance_club ac 
                           INNER JOIN utilisateur u ON ac.id_user = u.id_user 
                           INNER JOIN club c ON c.id_club = ac.id_club
-                          WHERE c.id_club = ?");
+                          WHERE c.id_club = ? AND ac.role_adherent = 'admin'");
     $req_adherent->execute([$club_utilisateur['id_club']]);
     $adherents = $req_adherent->fetchAll(PDO::FETCH_ASSOC); 
-}
+} 
 if (isset($_POST['id_adherent'])) {
     $id_adherent = $_POST['id_adherent'];
-    $req = $bdd->prepare("DELETE FROM appartenance_club WHERE id_user = ?");
+    $req = $conn->prepare("DELETE FROM appartenance_club WHERE id_user = ?");
     $req->execute([$id_adherent]);
 }
-$req = $bdd->prepare("SELECT ac.id_user AS id_user, u.nom AS nom, u.prenom AS prenom, c.id_club AS id_club, c.nom_club AS nom_club, ac.role_adherent AS role 
+$req = $conn->prepare("SELECT ac.id_user AS id_user, u.nom AS nom, u.prenom AS prenom, c.id_club AS id_club, c.nom_club AS nom_club, ac.role_adherent AS role 
     FROM appartenance_club ac 
     INNER JOIN utilisateur u ON ac.id_user = u.id_user 
     INNER JOIN club c ON c.id_club = ac.id_club");
@@ -76,7 +72,7 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
 
             </tr>
         </thead>
-        <tbody>
+        <tbody> <!-- on affiche tous les adhérents du club-->
         <?php foreach ($adherents as $adherent) { ?>
                 <tr>
                     <td><?php echo $adherent['nom']; ?></td>
