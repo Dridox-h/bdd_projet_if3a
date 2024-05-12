@@ -11,8 +11,8 @@ $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 // Vérifiez si l'utilisateur est administrateur d'un club
 if ($club_utilisateur) {
 
-    // Récupérez les adherents du club de l'utilisateur
-    $req_reservation = $conn->prepare("SELECT r.id_reservation, c.emplacement AS emplacement , r.start_datetime AS debut , r.end_datetime AS fin, u.nom AS nom, u.prenom AS prenom
+    // Récupérez les reservation du club de l'utilisateur
+    $req_reservation = $conn->prepare("SELECT r.id_reservation AS id_reservation, c.emplacement AS emplacement , r.start_datetime AS debut , r.end_datetime AS fin, u.nom AS nom, u.prenom AS prenom
                                     FROM reservation r 
                                     INNER JOIN inscrits i ON r.id_reservation = i.id_reservation
                                     INNER JOIN courts c ON c.id_court = r.id_court
@@ -33,7 +33,7 @@ if (isset($_POST['id_reservation'])) {
     $req->execute([$id_reservation]);
 }
 
-$req = $conn->prepare("SELECT r.id_reservation, c.emplacement AS emplacement , r.start_datetime AS debut , r.end_datetime AS fin, u.nom AS nom, u.prenom AS prenom
+$req = $conn->prepare("SELECT r.id_reservation AS id_reservation, c.emplacement AS emplacement , r.start_datetime AS debut , r.end_datetime AS fin, u.nom AS nom, u.prenom AS prenom
                       FROM reservation r 
                       INNER JOIN inscrits i ON r.id_reservation = i.id_reservation
                       INNER JOIN courts c ON c.id_court = r.id_court
