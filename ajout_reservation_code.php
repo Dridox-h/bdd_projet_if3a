@@ -97,7 +97,7 @@ if ($result) {
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Event Calendar</title>
+    <title>Reservation</title>
     <link href="stylesheet/style.css" rel="stylesheet" type="text/css">
     <link href="stylesheet/calendar.css" rel="stylesheet" type="text/css">
 </head>
