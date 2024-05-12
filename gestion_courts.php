@@ -29,7 +29,7 @@ if (isset($_POST['id_court'])) {
     $req->execute([$id_court]);
 }
 
-$req = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+$req = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface, c.etat AS etat
                       FROM courts c 
                       INNER JOIN club cl ON c.id_club = cl.id_club
                       WHERE c.id_club = ?"); 
@@ -75,6 +75,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
                 <th>Nom du club</th>
                 <th>Type de surface</th>
                 <th>Ville</th>
+                <th>Etat</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -86,6 +87,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
                     <td><?php echo $court['nom_club']; ?></td>
                     <td><?php echo $court['type_surface']; ?></td>
                     <td><?php echo $court['ville']; ?></td>
+                    <td><?php echo $court['etat'] == 0 ? "Bloqué" : "Disponible"; ?></td>
                     <td>
                         <a href="modifier_court.php?id=<?php echo $court['id_court']; ?>">Modifier</a>
                         <form method="POST" style="display:inline;">
