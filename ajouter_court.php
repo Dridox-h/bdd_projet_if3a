@@ -20,8 +20,8 @@ if ($club_utilisateur) {
         $type_surface = $_POST['type_surface'];
         $id_club = $club_utilisateur['id_club'];
 
-        $req = $conn->prepare("INSERT INTO courts (emplacement, id_club, type_surface) VALUES (?, ?, ?)");
-        $req->execute([$emplacement, $id_club, $type_surface]);
+        $req = $conn->prepare("INSERT INTO courts (emplacement, id_club, type_surface, etat) VALUES (?, ?, ?,?)");
+        $req->execute([$emplacement, $id_club, $type_surface,"1"]);
 
         header("Location: gestion_courts.php");
         exit();
@@ -40,8 +40,8 @@ if ($club_utilisateur) {
     <div id ="MenuBarre">
         <a href="index.php">Page d'accueil</a>
     </div>
-    <?if ($club_utilisateur) {?>
-    <h2>Ajouter un court à votre club </h2>
+    <?php if ($club_utilisateur) { ?>
+    <h2>Ajouter un court à votre club</h2>
 
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="emplacement">Emplacement:</label><br>
@@ -52,10 +52,10 @@ if ($club_utilisateur) {
 
         <input type="submit" value="Ajouter">
     </form>
-    <?php
-    } else {
-        echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
-    }
-    ?>
+<?php
+} else {
+    echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
+} ?>
+
 </body>
 </html>
