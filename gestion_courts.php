@@ -31,8 +31,9 @@ if (isset($_POST['id_court'])) {
 
 $req = $conn->prepare("SELECT c.id_court, c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
                       FROM courts c 
-                      INNER JOIN club cl ON c.id_club = cl.id_club"); 
-$req->execute();
+                      INNER JOIN club cl ON c.id_club = cl.id_club
+                      WHERE c.id_club = ?"); 
+$req->execute([$club_utilisateur['id_club']]);
 $courts = $req->fetchAll(PDO::FETCH_ASSOC); 
 ?>
 
