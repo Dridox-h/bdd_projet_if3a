@@ -42,6 +42,7 @@ if (!empty($_POST['liste_club'])) {
      <!-- Début du script pour l'utilisation du calendrier, on définit les variables avec les données précédent récupérée en json -->
     <script>
         $(document).ready(function() {
+        
             var events = <?php echo $events_json; ?>;
             
             events.forEach(function(event) {
@@ -97,7 +98,10 @@ if (!empty($_POST['liste_club'])) {
 <body>
 
 <!-- ajout de la barre de naviagation -->
-<div id=MenuBarre>
+<div id="MenuBarre">
+        <a href="index.php">
+            <img src="img/logo.png" alt="Logo du site" width="120px">
+            </a>
     <h3>
         <!-- La barre va afficher si l'utilisateur est connecté et lui indiquer quel page il peut utiliser sinon elle demandera de se connecter -->
         <?php if (isset($_SESSION['id_user'])) :?>
@@ -127,9 +131,7 @@ if (!empty($_POST['liste_club'])) {
         $courts = $req_courts->fetchAll(PDO::FETCH_ASSOC);
 
         if ($courts) { ?>
-            <a href="gestion_courts.php">Gestion des courts</a><br/>
-            <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
-            <a href="statistique.php">Statistiques du club</a><br/>
+
 
         <?php } ?>
             <!-- si non-connecté on affiche la possibilité de se connecter -->
@@ -149,7 +151,8 @@ if (!empty($_POST['liste_club'])) {
                     Espace Admin
                         <br/>
                     <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
-                    <a href="gestion_courts.php">Gestion des courts de tennis</a>
+                    <a href="gestion_courts.php">Gestion des courts de tennis</a><br/>
+                    <a href="statistique.php">Statistiques du club</a><br/>
                 </h4>
             </div>
         <?php }

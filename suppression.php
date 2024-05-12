@@ -13,6 +13,7 @@ if (isset($_POST['supp_reservation']) && !empty($_POST['supp_reservation'])) {
 
     // Afficher un message de succès ou de confirmation
     echo "La réservation a été supprimée avec succès.";
+echo "<a href='index.php'> retour au menu </a>";
 } else {
     // Si la valeur n'est pas définie ou est vide, afficher un message d'erreur
     echo "Erreur : Identifiant de réservation non spécifié.";

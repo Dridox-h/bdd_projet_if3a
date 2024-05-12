@@ -18,6 +18,14 @@ h1 {
     margin: 2rem 0 2rem 0;
 }
 
+h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+    padding: 10px;
+}
+
 .section-container {
     height: 100vh;
 }
@@ -34,12 +42,36 @@ h1 {
     justify-content: center;
 }
 
-#MenuBarre{
-    position: sticky;
-    top: 0;
+#MenuBarre {
+    position: relative;
     background-color: coral;
-    padding:20px;
+    padding: 1rem 4rem 1rem 4rem;
     border-bottom: 5px solid #b84315;
+    min-height: 150px;
+    align-items: center;
+}
+
+#MenuBarre * {
+    color: white;
+}
+
+#MenuBarre a {
+    color: #337AB7;
+}
+
+#MenuBarre p {
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+    padding: 0;
+}
+
+#MenuBarre img {
+    position: absolute;
+
+    top: 50%;
+    transform: translateY(-50%);
+    user-select: none;
 }
 
 #calendar {
@@ -122,19 +154,9 @@ h1 {
 }
 
 .header-menu img {
-    width: 40px; 
+    width: 40px;
     height: auto;
     margin-right: 10px;
-}
-
-h3 {
-   
-    font-size: 24px; 
-    font-weight: bold; 
-    color: #000000; 
-    text-align: center;
-    padding: 10px;
-   
 }
 
 .button {
@@ -144,23 +166,19 @@ h3 {
     padding: 10px 20px;
     font-size: 14px;
     cursor: pointer;
-    border-radius: 5px; 
+    border-radius: 5px;
 }
 
-.menu_calendar{
+.menu_calendar {
     text-align: center;
 }
 
-#MenuBarre{
-    position: sticky;
-    top: 0;
-    background-color: coral;
-    padding:20px;
-    border-bottom: 5px solid #b84315;
-}
+.clubChoice {
+    display: flex;
+    flex-direction: column;
 
-#adminBarre{
-    position: static;
-    background-color: #f8cf00;
-    border-bottom: 5px solid #ba9a02;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px 0 30px 0;
 }

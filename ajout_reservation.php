@@ -51,11 +51,11 @@ if (isset($_POST['supp_reservation'])) {
 
     <form action="ajout_reservation_code.php"  method="post">
     <label for="nom">start date : </label>
-    <input type="datetime" id="start_date" name="start_date"  placeholder="YYYY-MM-DDTHH:MM:SS">
+    <input type="datetimel" id="start_date" name="start_date"  placeholder="YYYY-MM-DD HH:MM:SS">
 
 
     <label for="duree">end date : </label>
-    <input type="datetime" id="end_date" name="end_date"   placeholder="YYYY-MM-DDTHH:MM:SS">
+    <input type="datetime" id="end_date" name="end_date"   placeholder="YYYY-MM-DD HH:MM:SS">
 
         <?php
         // Récupérer le nom du club depuis l'URL
