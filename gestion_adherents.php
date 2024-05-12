@@ -14,7 +14,7 @@ if ($club_utilisateur) {
                           FROM appartenance_club ac 
                           INNER JOIN utilisateur u ON ac.id_user = u.id_user 
                           INNER JOIN club c ON c.id_club = ac.id_club
-                          WHERE c.id_club = ? AND ac.role_adherent = 'admin'");
+                          WHERE c.id_club = ? ");
     $req_adherent->execute([$club_utilisateur['id_club']]);
     $adherents = $req_adherent->fetchAll(PDO::FETCH_ASSOC); 
 } 
@@ -27,7 +27,7 @@ $req = $conn->prepare("SELECT ac.id_user AS id_user, u.nom AS nom, u.prenom AS p
     FROM appartenance_club ac 
     INNER JOIN utilisateur u ON ac.id_user = u.id_user 
     INNER JOIN club c ON c.id_club = ac.id_club
-    WHERE c.id_club = ? AND ac.role_adherent = 'admin'");
+    WHERE c.id_club = ? ");
 $req->execute([$club_utilisateur['id_club']]);
 $adherents = $req->fetchAll(PDO::FETCH_ASSOC); 
 
