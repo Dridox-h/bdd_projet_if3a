@@ -23,11 +23,9 @@ $date_fin = htmlspecialchars($_POST['end_date'], ENT_QUOTES, 'UTF-8');
 $nomClub = htmlspecialchars($_POST['nom_club'], ENT_QUOTES, 'UTF-8');
 $terrain = htmlspecialchars($_POST['terrain'], ENT_QUOTES, 'UTF-8');
 
-print_r($date_debut);
-print_r($date_fin);
 
 $parsedDate = date_parse($date_debut);
-print_r($parsedDate); 
+
 //echo $date_debut,$date_fin,$nomClub,$terrain;
 // Valider les données d'entrée
 if (empty($date_debut) || empty($date_fin) || empty($nomClub)|| empty($terrain)) {
@@ -54,7 +52,7 @@ if ($diff->h >2){
 
 }
 // Afficher la différence
-echo "Différence: " . $diff->format('%a jours, %h heures et %i minutes');
+//echo "Différence: " . $diff->format('%a jours, %h heures et %i minutes');
 
 // Insérer les données dans la table de réservation
 $sql = "SELECT id_court FROM courts WHERE emplacement = ?";
@@ -63,6 +61,17 @@ $stmt->execute([$terrain]);
 $id_court = $stmt->fetchColumn();
 
 
+$sql_check_overlap = "SELECT COUNT(*) AS count FROM reservation WHERE id_court = ? AND ((start_datetime BETWEEN ? AND ?) OR (end_datetime BETWEEN ? AND ?))";
+$stmt_check_overlap = $conn->prepare($sql_check_overlap);
+$stmt_check_overlap->execute([$id_court, $date_debut, $date_fin, $date_debut, $date_fin]);
+$row_check_overlap = $stmt_check_overlap->fetch(PDO::FETCH_ASSOC);
+$num_overlap = $row_check_overlap['count'];
+
+// Si une réservation se chevauche, informez l'utilisateur et ne pas insérez la nouvelle réservation
+if ($num_overlap > 0) {
+    echo "Impossible de réserver ce court pendant cette période. Veuillez choisir une autre période.";
+    exit();
+}
 $sql = "INSERT INTO reservation (start_datetime, end_datetime, id_court) VALUES (?, ?, ?)";
 $stmt = $conn->prepare($sql);
 
@@ -82,7 +91,7 @@ if ($result) {
     if ($id_reservation_row) {
         $id_reservation = $id_reservation_row['id_reservation'];
         
-        echo "ID de réservation: " . $id_reservation;
+        //echo "ID de réservation: " . $id_reservation;
         $_SESSION['id_reservation'] = $id_reservation;
 
     } else {
