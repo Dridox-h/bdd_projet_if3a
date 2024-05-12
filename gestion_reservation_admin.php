@@ -1,5 +1,5 @@
 <?php
-include 'db_connect';
+include 'db_connect.php';
 session_start(); 
 
 // préparation de la requête pour savoir si un user est un admin
@@ -12,12 +12,12 @@ $club_utilisateur = $req_club->fetch(PDO::FETCH_ASSOC);
 if ($club_utilisateur) {
 
     // Récupérez les adherents du club de l'utilisateur
-    $req_reservation = $conn->prepare("SELECT c.emplacement AS emplacement , r.date_reservation AS date , r.duree AS duree , r.heure_debut AS heure, u.nom AS nom, u.prenom AS prenom
+    $req_reservation = $conn->prepare("SELECT r.id_reservation, c.emplacement AS emplacement , r.start_datetime AS debut , r.end_datetime AS fin, u.nom AS nom, u.prenom AS prenom
                                     FROM reservation r 
                                     INNER JOIN inscrits i ON r.id_reservation = i.id_reservation
                                     INNER JOIN courts c ON c.id_court = r.id_court
                                     INNER JOIN utilisateur u ON u.id_user = i.id_user
-                                    WHERE i.role = 'organisateur' AND c.id_club = ?");
+                                    WHERE i.role = 'leader' AND c.id_club = ?");
     $req_reservation->execute([$club_utilisateur['id_club']]);
     $reservations = $req_reservation->fetchAll(PDO::FETCH_ASSOC); 
 } else {
@@ -27,18 +27,20 @@ if ($club_utilisateur) {
 
 if (isset($_POST['id_reservation'])) {
     $id_reservation = $_POST['id_reservation'];
-    $req = $conn->prepare("DELETE FROM reservation WHERE id_reservation = ?");
+    $req_inscrits = $conn->prepare("DELETE FROM inscrits WHERE id_reservation = ?"); //On supprime d'abords les inscrits 
+    $req_inscrits->execute([$id_reservation]);
+    $req = $conn->prepare("DELETE FROM reservation WHERE id_reservation = ?"); // puis la reservation
     $req->execute([$id_reservation]);
 }
 
-$req = $conn->prepare("SELECT c.emplacement AS emplacement , r.date_reservation AS date , r.duree AS duree , r.heure_debut AS heure, u.nom AS nom, u.prenom AS prenom
+$req = $conn->prepare("SELECT r.id_reservation, c.emplacement AS emplacement , r.start_datetime AS debut , r.end_datetime AS fin, u.nom AS nom, u.prenom AS prenom
                       FROM reservation r 
                       INNER JOIN inscrits i ON r.id_reservation = i.id_reservation
                       INNER JOIN courts c ON c.id_court = r.id_court
                       INNER JOIN utilisateur u ON u.id_user = i.id_user
-                      WHERE i.role = 'organisateur'"); 
-$req->execute();
-$courts = $req->fetchAll(PDO::FETCH_ASSOC); 
+                      WHERE i.role = 'leader'AND c.id_club = ?"); 
+$req->execute([$club_utilisateur['id_club']]);
+$reservations = $req->fetchAll(PDO::FETCH_ASSOC); 
 ?>
 
 <!DOCTYPE html>
@@ -46,6 +48,7 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Tableau des réservation</title>
+    <link href="stylesheet/styles.css" rel="stylesheet">
     <style>
         table {
             border-collapse: collapse;
@@ -62,6 +65,9 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+<div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+</div>
 <h1>Tableau des réservation de votre club </h1>
 
 <?php if ($club_utilisateur) { ?>
@@ -69,9 +75,8 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
     <thead>
         <tr>
             <th>Emplacement</th>
-            <th>Date</th>
-            <th>Heure de début</th>
-            <th>Durée</th>
+            <th>Début</th>
+            <th>Fin</th>
             <th>Nom et Prenom de l'organisateur</th>
             <th>Supprimer</th> 
 
@@ -81,11 +86,10 @@ $courts = $req->fetchAll(PDO::FETCH_ASSOC);
     <tbody>
     <?php foreach ($reservations as $reservation) { ?>
             <tr>
-                <td><?php echo $court['emplacement']; ?></td>
-                <td><?php echo $court['date']; ?></td>
-                <td><?php echo $court['heure']; ?></td>
-                <td><?php echo $court['duree']; ?></td>
-                <td><?php echo $court['nom'],$court['prenom']; ?></td>
+                <td><?php echo $reservation['emplacement']; ?></td>
+                <td><?php echo $reservation['debut']; ?></td>
+                <td><?php echo $reservation['fin']; ?></td>
+                <td><?php echo $reservation['nom'],' ',$reservation['prenom']; ?></td>
 
                 <td>
                     <form method="POST" style="display:inline;">

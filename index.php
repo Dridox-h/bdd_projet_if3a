@@ -152,6 +152,7 @@ if (!empty($_POST['liste_club'])) {
                         <br/>
                     <a href="gestion_adherents.php">Gestion des adhérents</a><br/>
                     <a href="gestion_courts.php">Gestion des courts de tennis</a><br/>
+                    <a href="gestion_reservation_admin.php">Gestion des reservations</a><br/>
                     <a href="statistique.php">Statistiques du club</a><br/>
                 </h4>
             </div>
