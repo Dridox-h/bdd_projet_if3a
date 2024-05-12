@@ -21,6 +21,7 @@ $clubs = $stmt_clubs->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Statistiques par Club</title>
+    <link href="stylesheet/styles.css" rel="stylesheet">
     <style>
         table {
             border-collapse: collapse;
@@ -40,6 +41,9 @@ $clubs = $stmt_clubs->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+<div id ="MenuBarre">
+        <a href="index.php">Page d'accueil</a>
+</div>
     <h1>Statistiques par Club</h1>
 
     <?php foreach ($clubs as $club): ?>
