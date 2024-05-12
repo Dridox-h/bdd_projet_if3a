@@ -10,7 +10,7 @@ if (isset($_GET['id'])) {
         die('Erreur de connexion : ' . $e->getMessage());
     }
 
-    $req = $bdd->prepare("SELECT c.emplacement, cl.nom_club AS nom_club, cl.ville AS ville, c.type_surface 
+    $req = $bdd->prepare("SELECT c.emplacement, c.etat, cl.nom_club, cl.ville, c.type_surface 
                           FROM courts c 
                           INNER JOIN club cl ON c.id_club = cl.id_club
                           WHERE c.id_court = :court_id");
@@ -25,18 +25,23 @@ if (isset($_GET['id'])) {
     header('Location: gestion_courts.php');
     exit;
 }
+
 // on récupère les données envoyées
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $emplacement = $_POST['emplacement'];
     $type_surface = $_POST['type_surface'];
+    $etat = $_POST['etat'];
 
     try { // on update les courts en fonction des données
         $update_req = $bdd->prepare("UPDATE courts 
-                                    SET emplacement = :emplacement, type_surface = :type_surface 
+                                    SET emplacement = :emplacement, 
+                                    type_surface = :type_surface,
+                                    etat = :etat
                                     WHERE id_court = :court_id");
         $update_req->bindParam(':emplacement', $emplacement);
         $update_req->bindParam(':type_surface', $type_surface);
         $update_req->bindParam(':court_id', $court_id);
+        $update_req->bindParam(':etat', $etat);
         $update_req->execute();
 
         header('Location: gestion_courts.php');
@@ -59,11 +64,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 <h2>Modifier le court</h2>
 
-<form method="post"> <!--on fait un formulaire pour récupèrer les données -->
+<form method="post"> <!--on fait un formulaire pour récupérer les données -->
     <label for="emplacement">Emplacement:</label><br>
-    <input type="text" id="emplacement" name="emplacement" value="<?php echo $court['emplacement']; ?>"><br>
+    <input type="text" id="emplacement" name="emplacement" value="<?php echo htmlspecialchars($court['emplacement']); ?>"><br>
     <label for="type_surface">Type de surface:</label><br>
-    <input type="text" id="type_surface" name="type_surface" value="<?php echo $court['type_surface']; ?>"><br><br>
+    <input type="text" id="type_surface" name="type_surface" value="<?php echo htmlspecialchars($court['type_surface']); ?>"><br><br>
+    <label for="etat">Disponible 1/0 (oui/non) :</label><br>
+    <input type="text" id="etat" name="etat" value="<?php echo htmlspecialchars($court['etat']); ?>"><br><br>
     <input type="submit" value="Modifier">
 </form>
 

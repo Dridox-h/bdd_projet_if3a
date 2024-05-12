@@ -53,7 +53,7 @@ $userId = $_SESSION['id_user']; // on stocke l'id de l'user
         <?php
 
         // Préparer la requête SQL pour récupérer les terrains associés au club sélectionné
-        $sql = "SELECT c.nom_club,cr.emplacement FROM utilisateur INNER JOIN appartenance_club ac ON ac.id_user = utilisateur.id_user INNER JOIN club c ON c.id_club=ac.id_club INNER JOIN courts cr ON cr.id_club=c.id_club WHERE utilisateur.id_user = ?";
+        $sql = "SELECT c.nom_club,cr.emplacement FROM utilisateur INNER JOIN appartenance_club ac ON ac.id_user = utilisateur.id_user INNER JOIN club c ON c.id_club=ac.id_club INNER JOIN courts cr ON cr.id_club=c.id_club WHERE utilisateur.id_user = ? AND cr.etat = '1'";
         // Préparer et exécuter la requête avec le nom du club
         $stmt = $conn->prepare($sql);
         $stmt->execute([$userId]);
