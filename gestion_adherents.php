@@ -26,8 +26,9 @@ if (isset($_POST['id_adherent'])) {
 $req = $conn->prepare("SELECT ac.id_user AS id_user, u.nom AS nom, u.prenom AS prenom, c.id_club AS id_club, c.nom_club AS nom_club, ac.role_adherent AS role 
     FROM appartenance_club ac 
     INNER JOIN utilisateur u ON ac.id_user = u.id_user 
-    INNER JOIN club c ON c.id_club = ac.id_club");
-$req->execute();
+    INNER JOIN club c ON c.id_club = ac.id_club
+    WHERE c.id_club = ? AND ac.role_adherent = 'admin'");
+$req->execute([$club_utilisateur['id_club']]);
 $adherents = $req->fetchAll(PDO::FETCH_ASSOC); 
 
 ?>
@@ -59,7 +60,7 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
 
-    <?php if ($club_utilisateur) { ?>
+    <?php if ($club_utilisateur) : ?>
         <h1>Tableau des adherents de votre club</h1>
         <table>
         <thead>
@@ -84,17 +85,17 @@ $adherents = $req->fetchAll(PDO::FETCH_ASSOC);
                                 <input type="hidden" name="id_adherent" value="<?php echo $adherent['id_user']; ?>">
                                 <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir expulser cette adherent ?')">Expulser</button>
                             </form>
-                        <?php }?>
+                        <?php } else { ?>
+                               Vous ne pouvez pas vous expulser vous-même.
+                        <?php } ?>                    
                     </td>
-
                 </tr>
         <?php } ?>
         </tbody>
         </table>
         <a href="ajout_adherent.php">Ajouter des adhérents</a>
-    <?php }
-    else {
-        echo "<p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>";
-    }?>
+    <?php else: ?><!-- si non-administrateur on propose la connexion -->
+    <p>Vous n'êtes pas administrateur d'un club. <a href='connexion.php'>Connectez-vous</a> pour accéder à cette page.</p>
+    <?php endif; ?>
 </body>
 </html>
